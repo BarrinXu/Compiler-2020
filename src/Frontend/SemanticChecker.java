@@ -139,12 +139,14 @@ public class SemanticChecker implements ASTVisitor {
             if(!it.condExpr.type.isBool())
                 throw new semanticError("",it.condExpr.pos);
         }
+        if(it.loopBody!=null) {
         currentScope=new Scope(currentScope);
         loopStack.push(it);
         it.loopBody.scope=currentScope;
         it.loopBody.accept(this);
         loopStack.pop();
         currentScope=currentScope.parentScope();
+        }
     }
 
     @Override
