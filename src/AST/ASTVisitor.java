@@ -5,7 +5,7 @@ public interface ASTVisitor {
     //void visit(structDefNode it);
 
     void visit(returnStmtNode it);
-    void visit(blockStmtNode it);
+
     void visit(exprStmtNode it);
     void visit(ifStmtNode it);
 

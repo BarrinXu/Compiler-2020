@@ -56,7 +56,7 @@ public class SymbolCollector implements ASTVisitor {
     }
 
     @Override public void visit(returnStmtNode it) {}
-    @Override public void visit(blockStmtNode it) {}
+
     @Override public void visit(exprStmtNode it) {}
     @Override public void visit(ifStmtNode it) {}
     @Override public void visit(assignExprNode it) {}

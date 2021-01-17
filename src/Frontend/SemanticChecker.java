@@ -53,14 +53,6 @@ public class SemanticChecker implements ASTVisitor {
             throw new semanticError("",it.pos);
     }
 
-    @Override
-    public void visit(blockStmtNode it) {
-        if (!it.stmts.isEmpty()) {
-            currentScope = new Scope(currentScope);
-            for (StmtNode stmt : it.stmts) stmt.accept(this);
-            currentScope = currentScope.parentScope();
-        }
-    }
 
     @Override
     public void visit(exprStmtNode it) {

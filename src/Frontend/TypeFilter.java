@@ -62,10 +62,6 @@ public class TypeFilter implements ASTVisitor {
 
     }
 
-    @Override
-    public void visit(blockStmtNode it) {
-
-    }
 
     @Override
     public void visit(exprStmtNode it) {
