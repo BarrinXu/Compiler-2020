@@ -17,7 +17,7 @@ public class TypeFilter implements ASTVisitor {
     public void visit(RootNode it) {
         currentScope=gScope;
         if(!it.nodeList.isEmpty())
-            it.nodeList.forEach(node->{if(!(node instanceof declarationBlockNode)) node.accept(this);});
+            it.nodeList.forEach(node->{if(!(node instanceof declarationNode)) node.accept(this);});
     }
 
     @Override

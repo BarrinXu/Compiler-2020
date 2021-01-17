@@ -347,7 +347,7 @@ public class ASTBuilder extends YxBaseVisitor<ASTNode> {
             call=new methodExpr(((memberNode) call).call,((memberNode) call).member,call.pos);
         else
             throw new semanticError("",call.pos);
-        return new funcCallNode(call,ctx.expressionList()==null?null:solveExpressionList(ctx.expressionList()),new position(ctx));
+        return new funcCallNode(call,ctx.expressionList()==null?new ArrayList<>():solveExpressionList(ctx.expressionList()),new position(ctx));
     }
 
     public ArrayList<ExprNode> solveExpressionList(YxParser.ExpressionListContext ctx){
