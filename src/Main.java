@@ -19,8 +19,8 @@ import java.io.InputStream;
 public class Main {
     public static void main(String[] args) throws Exception{
 
-        String name = "test.yx";
-        InputStream input = new FileInputStream(name);
+        //String name = "test.yx";
+        InputStream input = System.in;
 
         try {
             RootNode ASTRoot;
