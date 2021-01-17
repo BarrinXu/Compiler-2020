@@ -69,6 +69,33 @@ public class globalScope extends Scope {
         tmpFunc.setScope(new functionScope(this));
         tmpFunc.setReturnType(intInstance);
         defineMethod("size",tmpFunc,pos);
+
+        tmpFunc=new funcDecl("length",null);
+        tmpFunc.isMethod=true;
+        tmpFunc.setScope(new functionScope(this));
+        tmpFunc.setReturnType(intInstance);
+        stringType.defineMethod("length",tmpFunc,pos);
+
+        tmpFunc=new funcDecl("substring",null);
+        tmpFunc.isMethod=true;
+        tmpFunc.setScope(new functionScope(this));
+        tmpFunc.addParameter(new varEntity("left",intInstance,false),pos);
+        tmpFunc.addParameter(new varEntity("right",intInstance,false),pos);
+        tmpFunc.setReturnType(stringType);
+        stringType.defineMethod("substring",tmpFunc,pos);
+
+        tmpFunc=new funcDecl("parseInt",null);
+        tmpFunc.isMethod=true;
+        tmpFunc.setScope(new functionScope(this));
+        tmpFunc.setReturnType(intInstance);
+        stringType.defineMethod("parseInt",tmpFunc,pos);
+
+        tmpFunc=new funcDecl("ord",null);
+        tmpFunc.isMethod=true;
+        tmpFunc.setScope(new functionScope(this));
+        tmpFunc.addParameter(new varEntity("pos",intInstance,false),pos);
+        tmpFunc.setReturnType(intInstance);
+        stringType.defineMethod("ord",tmpFunc,pos);
     }
 
     public void defineClass(String name, Type type, position pos){
