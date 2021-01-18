@@ -16,6 +16,7 @@ public class ArrayType extends Type {
     public ArrayType(Type array){
         this.baseType=((ArrayType)array).baseType;
         this.dim=array.dim()-1;
+		this.typeCategory=TypeCategory.ARRAY;
     }
 
     @Override
