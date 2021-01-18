@@ -32,7 +32,7 @@ public class SemanticChecker implements ASTVisitor {
             collectingClassMember=true;
             it.nodeList.forEach(node->{if(node instanceof classNode) node.accept(this);});
             collectingClassMember=false;
-            it.nodeList.forEach(node->node.accept(this));
+            it.nodeList.forEach(node->{if(!(node instanceof classNode)) node.accept(this);});
         }
         if(!gScope.containMethod("main",true))
             throw new semanticError("",it.pos);
