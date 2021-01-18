@@ -7,13 +7,13 @@ import java.util.HashMap;
 
 public class SymbolCollector implements ASTVisitor {
     private globalScope gScope;
-    Scope currentScope=null;
+    Scope curScope=null;
     public SymbolCollector(globalScope gScope) {
         this.gScope = gScope;
     }
     @Override
     public void visit(RootNode it) {
-        currentScope=gScope;
+        curScope=gScope;
         it.nodeList.forEach(node -> node.accept(this));
     }
 
@@ -25,16 +25,16 @@ public class SymbolCollector implements ASTVisitor {
     }*/
 
     @Override public void visit(classNode it) {
-        if(!(currentScope instanceof globalScope))
+        if(!(curScope instanceof globalScope))
             throw new internalError("",it.pos);
         var type=new classType(it.name);
-        currentScope=new Scope(currentScope);
+        curScope=new Scope(curScope);
         it.members.forEach(member->member.accept(this));
         it.methods.forEach(method->method.accept(this));
         if(it.constructor!=null)
             it.constructor.accept(this);
-        type.localScope=currentScope;
-        currentScope=currentScope.faScope;
+        type.localScope=curScope;
+        curScope=curScope.faScope;
         gScope.defineClass(it.name,type,it.pos);
         if(gScope.haveMethod(it.name,false))
             throw new semanticError("",it.pos);
@@ -43,11 +43,13 @@ public class SymbolCollector implements ASTVisitor {
     @Override
     public void visit(functionNode it) {
         var type=new funcDecl(it.name);
+        if(curScope==gScope&&gScope.hasType(it.name))
+            throw new semanticError("",it.pos);
         it.decl=type;
         if(it.isConstructor)
-            currentScope.defConstructor(type,it.pos);
+            curScope.defConstructor(type,it.pos);
         else
-            currentScope.defMethod(it.name,type,it.pos);
+            curScope.defMethod(it.name,type,it.pos);
     }
 
     @Override public void visit(returnStmtNode it) {}
