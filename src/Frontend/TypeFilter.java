@@ -48,11 +48,8 @@ public class TypeFilter implements ASTVisitor {
         varEntity parameter=new varEntity(it.name,gScope.makeType(it.type));
         if(parameter.type().isVoid())
             throw new semanticError("",it.pos);
-        if(curScope instanceof functionScope){
-            it.entity=parameter;
-            ((functionScope) curScope).addParameter(parameter,it.pos);
-        }
-        else throw new internalError("",it.pos);
+        it.entity=parameter;
+        ((functionScope)curScope).addParameter(parameter,it.pos);
     }
 
 
