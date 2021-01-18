@@ -17,6 +17,6 @@ public class classType extends BaseType{
 
     @Override
     public boolean sameType(Type it){
-        return it.isNull()||(it.dim()==0&&it.isClass()&&this.name().equals(((classType)it).name()));
+        return it.isNull()||(it.isClass()&&this.name().equals(((classType)it).name()));
     }
 }
