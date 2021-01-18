@@ -13,6 +13,6 @@ public class builtinType extends BaseType{
 
     @Override
     public boolean sameType(Type type){
-        return (isNull()&&(type.isArray()||type.isClass()))||(typeCategory==type.typeCategory);
+        return (isNull()&&(type.isArray()||type.isClass()))||(typeCategory==type.typeCategory&&type.dim()==0);
     }
 }

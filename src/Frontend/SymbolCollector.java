@@ -60,10 +60,6 @@ public class SymbolCollector implements ASTVisitor {
     @Override public void visit(binaryExprNode it) {}
 
 
-    @Override
-    public void visit(whileStmtNode it) {
-
-    }
 
     @Override
     public void visit(forStmtNode it) {

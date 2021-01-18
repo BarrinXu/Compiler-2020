@@ -124,10 +124,6 @@ public class SemanticChecker implements ASTVisitor {
     }
 
 
-    @Override
-    public void visit(whileStmtNode it) {
-
-    }
 
     @Override
     public void visit(forStmtNode it) {

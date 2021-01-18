@@ -22,7 +22,7 @@ abstract public class Type {
         return typeCategory==TypeCategory.BOOL;
     }
     public boolean isArray(){
-        return typeCategory==TypeCategory.ARRAY;
+        return dim()!=0;
     }
     public boolean isClass(){
         return typeCategory==TypeCategory.CLASS;

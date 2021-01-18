@@ -13,7 +13,6 @@ public interface ASTVisitor {
     void visit(binaryExprNode it);
 
 
-    void visit(whileStmtNode it);
 
     void visit(forStmtNode it);
 
