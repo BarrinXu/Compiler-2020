@@ -27,32 +27,29 @@ public class SymbolCollector implements ASTVisitor {
     @Override public void visit(classNode it) {
         if(!(currentScope instanceof globalScope))
             throw new internalError("",it.pos);
-        classType defClass=new classType(it.name);
-        Scope localScope=new classScope(currentScope);
-        currentScope=localScope;
+        var type=new classType(it.name);
+        currentScope=new Scope(currentScope);
         it.members.forEach(member->member.accept(this));
         it.methods.forEach(method->method.accept(this));
         if(it.constructor!=null)
             it.constructor.accept(this);
-        currentScope=currentScope.parentScope();
-        defClass.addScope(localScope);
-        gScope.defineClass(it.name,defClass,it.pos);
-        if(gScope.containMethod(it.name,false))
+        type.localScope=currentScope;
+        currentScope=currentScope.faScope;
+        gScope.defineClass(it.name,type,it.pos);
+        if(gScope.haveMethod(it.name,false))
             throw new semanticError("",it.pos);
     }
 
     @Override
     public void visit(functionNode it) {
-        funcDecl func=new funcDecl(it.name,it);
-        if(currentScope!=gScope)
-            func.isMethod=true;
-        else if(gScope.hasType(it.name))
+        var type=new funcDecl(it.name);
+        if(currentScope==gScope&&gScope.hasType(it.name))
             throw new semanticError("",it.pos);
-        it.decl=func;
+        it.decl=type;
         if(it.isConstructor)
-            currentScope.defineConstructor(func,it.pos);
+            currentScope.defConstructor(type,it.pos);
         else
-            currentScope.defineMethod(it.name,func,it.pos);
+            currentScope.defMethod(it.name,type,it.pos);
     }
 
     @Override public void visit(returnStmtNode it) {}

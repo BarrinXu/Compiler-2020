@@ -10,10 +10,11 @@ public class ArrayType extends Type {
     {
         this.baseType=baseType;
         this.dim=dim;
+        this.typeCategory=TypeCategory.ARRAY;
     }
 
     public ArrayType(Type array){
-        this.baseType=((ArrayType)array).baseType();
+        this.baseType=((ArrayType)array).baseType;
         this.dim=array.dim()-1;
     }
 
@@ -23,20 +24,13 @@ public class ArrayType extends Type {
         return dim;
     }
 
-    @Override
-    public TypeCategory typeCategory() {
-        return TypeCategory.ARRAY;
-    }
 
     @Override
     public boolean sameType(Type type) {
-        return type.isNull()||(dim==type.dim()&&baseType.sameType(type.baseType()));
+        return type.isNull()||(dim==type.dim()&&baseType.sameType(((ArrayType)type).baseType));
     }
 
-    @Override
-    public BaseType baseType() {
-        return baseType;
-    }
+
 
 
 }

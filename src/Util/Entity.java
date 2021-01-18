@@ -1,11 +1,8 @@
 package Util;
 
-abstract public class Entity extends Symbol{
-    private String name;
+abstract public class Entity {
+    public String name;
     public Entity(String name){
         this.name=name;
-    }
-    public String name(){
-        return name;
     }
 }

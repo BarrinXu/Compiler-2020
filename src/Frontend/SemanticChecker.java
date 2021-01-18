@@ -8,33 +8,33 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 public class SemanticChecker implements ASTVisitor {
-    private Scope currentScope;
-    private globalScope gScope;
+    public Scope curScope;
+    public globalScope gScope;
 
     public classType currentClass=null;
     public Type currentReturnType=null;
     public functionNode currentFunction;
-    public Stack<ASTNode> loopStack=new Stack<>();
+    public Stack<ASTNode> loop=new Stack<>();
 
-    public boolean collectingClassMember=false;
+    public boolean checkClassMember=false;
     public boolean haveReturn=false;
 
     public SemanticChecker(globalScope gScope) {
-        currentScope = this.gScope = gScope;
+        curScope = this.gScope = gScope;
     }
 
 
 
     @Override
     public void visit(RootNode it) {
-        currentScope=gScope;
+        curScope=gScope;
         if(!it.nodeList.isEmpty()){
-            collectingClassMember=true;
+            checkClassMember=true;
             it.nodeList.forEach(node->{if(node instanceof classNode) node.accept(this);});
-            collectingClassMember=false;
-            it.nodeList.forEach(node->{if(!(node instanceof classNode)) node.accept(this);});
+            checkClassMember=false;
+            it.nodeList.forEach(node->node.accept(this));
         }
-        if(!gScope.containMethod("main",true))
+        if(!gScope.haveMethod("main",true))
             throw new semanticError("",it.pos);
     }
 
@@ -65,15 +65,17 @@ public class SemanticChecker implements ASTVisitor {
         if (!it.condition.type.isBool())
             throw new semanticError("Semantic Error: type not match. It should be bool",
                     it.condition.pos);
-        currentScope=new Scope(currentScope);
-        it.thenStmt.scope=currentScope;
-        it.thenStmt.accept(this);
-        currentScope=currentScope.parentScope();
+        if(it.thenStmt!=null) {
+            curScope = new Scope(curScope);
+            it.thenStmt.scope = curScope;
+            it.thenStmt.accept(this);
+            curScope = curScope.faScope;
+        }
         if (it.elseStmt != null) {
-            currentScope=new Scope(currentScope);
-            it.elseStmt.scope=currentScope;
+            curScope=new Scope(curScope);
+            it.elseStmt.scope=curScope;
             it.elseStmt.accept(this);
-            currentScope=currentScope.parentScope();
+            curScope=curScope.faScope;
         }
     }
 
@@ -140,39 +142,37 @@ public class SemanticChecker implements ASTVisitor {
                 throw new semanticError("",it.condExpr.pos);
         }
         if(it.loopBody!=null) {
-        currentScope=new Scope(currentScope);
-        loopStack.push(it);
-        it.loopBody.scope=currentScope;
+        curScope=new Scope(curScope);
+        loop.push(it);
+        it.loopBody.scope=curScope;
         it.loopBody.accept(this);
-        loopStack.pop();
-        currentScope=currentScope.parentScope();
+        loop.pop();
+        curScope=curScope.faScope;
         }
     }
 
     @Override
     public void visit(declarationNode it) {
-        varEntity entity=new varEntity(it.name,gScope.makeType(it.type),currentScope==gScope);
+        varEntity entity=new varEntity(it.name,gScope.makeType(it.type));
         it.entity=entity;
         if(entity.type().isVoid())
             throw new semanticError("",it.pos);
-        if(currentScope instanceof classScope)
-            entity.setIsMember();
         if(it.expr!=null){
             it.expr.accept(this);
             if(!it.expr.type.sameType(entity.type()))
                 throw new semanticError("",it.pos);
         }
-        currentScope.defineMember(it.name,entity,it.pos);
+        curScope.defMember(it.name,entity,it.pos);
     }
 
     @Override
     public void visit(suiteNode it) {
         it.statements.forEach(node->{
             if(node instanceof suiteNode){
-                currentScope=new Scope(currentScope);
-                node.scope=currentScope;
+                curScope=new Scope(curScope);
+                node.scope=curScope;
                 node.accept(this);
-                currentScope=currentScope.parentScope();
+                curScope=curScope.faScope;
             }
             else
                 node.accept(this);
@@ -190,9 +190,9 @@ public class SemanticChecker implements ASTVisitor {
             currentReturnType=it.decl.type;
         currentFunction=it;
         haveReturn=false;
-        currentScope=it.decl.scope();
+        curScope=it.decl.localScope;
         it.suite.accept(this);
-        currentScope=currentScope.parentScope();
+        curScope=curScope.faScope;
         if(it.name.equals("main")){
             haveReturn=true;
             if(!currentReturnType.isInt())
@@ -208,14 +208,17 @@ public class SemanticChecker implements ASTVisitor {
     @Override
     public void visit(classNode it) {
         classType defClass=(classType) gScope.getTypeFromName(it.name,it.pos);
-        currentScope=defClass.scope();
+        curScope=defClass.localScope;
         currentClass=defClass;
-        it.members.forEach(node->node.accept(this));
-        it.methods.forEach(node->node.accept(this));
-        if(it.constructor!=null)
-            it.constructor.accept(this);
+        if(checkClassMember)
+            it.members.forEach(node->node.accept(this));
+        if(!checkClassMember){
+            it.methods.forEach(node->node.accept(this));
+            if(it.constructor!=null)
+                it.constructor.accept(this);
+        }
         currentClass=null;
-        currentScope=currentScope.parentScope();
+        curScope=curScope.faScope;
     }
 
     @Override
@@ -224,7 +227,7 @@ public class SemanticChecker implements ASTVisitor {
         if(!(it.call.type instanceof funcDecl))
             throw new semanticError("",it.call.pos);
         funcDecl func=(funcDecl)it.call.type;
-        ArrayList<varEntity> arguments=func.scope().parameters();
+        ArrayList<varEntity> arguments=func.localScope.parameters;
         ArrayList<ExprNode> parameters=it.parameters;
         parameters.forEach(node->node.accept(this));
         if(arguments.size()!=parameters.size())
@@ -242,8 +245,8 @@ public class SemanticChecker implements ASTVisitor {
         if(!it.call.type.isClass())
             throw new semanticError("",it.pos);
         classType type=(classType)it.call.type;
-        if(type.scope().containMember(it.member,false)){
-            it.type=type.scope().getMemberType(it.member,it.pos,false);
+        if(type.localScope.haveMember(it.member,false)){
+            it.type=type.localScope.getMemberType(it.member,it.pos,false);
         }
         else
             throw new semanticError("",it.pos);
@@ -296,13 +299,13 @@ public class SemanticChecker implements ASTVisitor {
 
     @Override
     public void visit(breakNode it) {
-        if(loopStack.isEmpty())
+        if(loop.isEmpty())
                 throw new semanticError("",it.pos);
     }
 
     @Override
     public void visit(continueNode it) {
-        if(loopStack.isEmpty())
+        if(loop.isEmpty())
             throw new semanticError("",it.pos);
     }
 
@@ -317,13 +320,13 @@ public class SemanticChecker implements ASTVisitor {
         else if(it.lhs.type.dim()<1)
             throw new semanticError("",it.lhs.pos);
         else
-            it.type=it.lhs.type.baseType();
+            it.type=((ArrayType)it.lhs.type).baseType;
     }
 
 
     @Override
     public void visit(identifierNode it) {
-        it.type=currentScope.getMemberType(it.name,it.pos,true);
+        it.type=curScope.getMemberType(it.name,it.pos,true);
     }
 
     @Override
@@ -340,7 +343,7 @@ public class SemanticChecker implements ASTVisitor {
 
     @Override
     public void visit(funcExpr it) {
-        it.type=currentScope.getMethodType(it.name,it.pos,true);
+        it.type=curScope.getMethodType(it.name,it.pos,true);
     }
 
     @Override
@@ -356,8 +359,8 @@ public class SemanticChecker implements ASTVisitor {
             if(!it.call.type.isClass())
                 throw new semanticError("",it.pos);
             classType type=(classType) it.call.type;
-            if(type.scope().containMethod(it.method,false))
-                it.type=type.scope().getMethodType(it.method,it.pos,false);
+            if(type.localScope.haveMethod(it.method,false))
+                it.type=type.localScope.getMethodType(it.method,it.pos,false);
             else
                 throw new semanticError("",it.pos);
 
@@ -384,18 +387,4 @@ public class SemanticChecker implements ASTVisitor {
         it.type=gScope.boolInstance;
     }
 
-    /*@Override
-    public void visit(cmpExprNode it) {
-        it.lhs.accept(this);
-        it.rhs.accept(this);
-        if (it.rhs.type != it.lhs.type)
-            throw new semanticError("Semantic Error: type not match. ", it.pos);
-    }*/
-
-    /*@Override
-    public void visit(varExprNode it) {
-        if (!currentScope.containsVariable(it.name, true))
-            throw new semanticError("Semantic Error: variable not defined. ", it.pos);
-        it.type = currentScope.getType(it.name, true);
-    }*/
 }

@@ -20,88 +20,84 @@ public class globalScope extends Scope {
         types.put("null",nullInstance);
 
         classType stringType=new classType("string");
-        stringType.addScope(new classScope(this));
+        stringType.localScope=new Scope(this);
         types.put("string",stringType);
         position pos=new position(0,0);
         funcDecl tmpFunc;
 
-        tmpFunc=new funcDecl("print",null);
-        tmpFunc.setScope(new functionScope(this));
-        tmpFunc.addParameter(new varEntity("str",stringType,false),pos);
-        tmpFunc.setReturnType(voidInstance);
-        defineMethod("print",tmpFunc,pos);
+        tmpFunc=new funcDecl("print");
+        tmpFunc.localScope=(new functionScope(this));
+        tmpFunc.addParameter(new varEntity("str",stringType),pos);
+        tmpFunc.type=voidInstance;
+        defMethod("print",tmpFunc,pos);
 
-        tmpFunc=new funcDecl("println",null);
-        tmpFunc.setScope(new functionScope(this));
-        tmpFunc.addParameter(new varEntity("str",stringType,false),pos);
-        tmpFunc.setReturnType(voidInstance);
-        defineMethod("println",tmpFunc,pos);
+        tmpFunc=new funcDecl("println");
+        tmpFunc.localScope=(new functionScope(this));
+        tmpFunc.addParameter(new varEntity("str",stringType),pos);
+        tmpFunc.type=voidInstance;
+        defMethod("println",tmpFunc,pos);
 
-        tmpFunc=new funcDecl("printInt",null);
-        tmpFunc.setScope(new functionScope(this));
-        tmpFunc.addParameter(new varEntity("n",intInstance,false),pos);
-        tmpFunc.setReturnType(voidInstance);
-        defineMethod("printInt",tmpFunc,pos);
+        tmpFunc=new funcDecl("printInt");
+        tmpFunc.localScope=(new functionScope(this));
+        tmpFunc.addParameter(new varEntity("n",intInstance),pos);
+        tmpFunc.type=voidInstance;
+        defMethod("printInt",tmpFunc,pos);
 
-        tmpFunc=new funcDecl("printlnInt",null);
-        tmpFunc.setScope(new functionScope(this));
-        tmpFunc.addParameter(new varEntity("n",intInstance,false),pos);
-        tmpFunc.setReturnType(voidInstance);
-        defineMethod("printlnInt",tmpFunc,pos);
+        tmpFunc=new funcDecl("printlnInt");
+        tmpFunc.localScope=(new functionScope(this));
+        tmpFunc.addParameter(new varEntity("n",intInstance),pos);
+        tmpFunc.type=voidInstance;
+        defMethod("printlnInt",tmpFunc,pos);
 
-        tmpFunc=new funcDecl("getString",null);
-        tmpFunc.setScope(new functionScope(this));
-        tmpFunc.setReturnType(stringType);
-        defineMethod("getString",tmpFunc,pos);
+        tmpFunc=new funcDecl("getString");
+        tmpFunc.localScope=(new functionScope(this));
+        tmpFunc.type=stringType;
+        defMethod("getString",tmpFunc,pos);
 
-        tmpFunc=new funcDecl("getInt",null);
-        tmpFunc.setScope(new functionScope(this));
-        tmpFunc.setReturnType(intInstance);
-        defineMethod("getInt",tmpFunc,pos);
+        tmpFunc=new funcDecl("getInt");
+        tmpFunc.localScope=(new functionScope(this));
+        tmpFunc.type=intInstance;
+        defMethod("getInt",tmpFunc,pos);
 
-        tmpFunc=new funcDecl("toString",null);
-        tmpFunc.setScope(new functionScope(this));
-        tmpFunc.addParameter(new varEntity("n",intInstance,false),pos);
-        tmpFunc.setReturnType(stringType);
-        defineMethod("toString",tmpFunc,pos);
+        tmpFunc=new funcDecl("toString");
+        tmpFunc.localScope=(new functionScope(this));
+        tmpFunc.addParameter(new varEntity("n",intInstance),pos);
+        tmpFunc.type=stringType;
+        defMethod("toString",tmpFunc,pos);
 
-        tmpFunc=new funcDecl("size",null);
-        tmpFunc.setScope(new functionScope(this));
-        tmpFunc.setReturnType(intInstance);
-        defineMethod("size",tmpFunc,pos);
+        tmpFunc=new funcDecl("size");
+        tmpFunc.localScope=(new functionScope(this));
+        tmpFunc.type=intInstance;
+        defMethod("size",tmpFunc,pos);
 
-        tmpFunc=new funcDecl("length",null);
-        tmpFunc.isMethod=true;
-        tmpFunc.setScope(new functionScope(this));
-        tmpFunc.setReturnType(intInstance);
-        stringType.defineMethod("length",tmpFunc,pos);
+        tmpFunc=new funcDecl("length");
+        tmpFunc.localScope=(new functionScope(this));
+        tmpFunc.type=intInstance;
+        stringType.defMethod("length",tmpFunc,pos);
 
-        tmpFunc=new funcDecl("substring",null);
-        tmpFunc.isMethod=true;
-        tmpFunc.setScope(new functionScope(this));
-        tmpFunc.addParameter(new varEntity("left",intInstance,false),pos);
-        tmpFunc.addParameter(new varEntity("right",intInstance,false),pos);
-        tmpFunc.setReturnType(stringType);
-        stringType.defineMethod("substring",tmpFunc,pos);
+        tmpFunc=new funcDecl("substring");
+        tmpFunc.localScope=(new functionScope(this));
+        tmpFunc.addParameter(new varEntity("left",intInstance),pos);
+        tmpFunc.addParameter(new varEntity("right",intInstance),pos);
+        tmpFunc.type=stringType;
+        stringType.defMethod("substring",tmpFunc,pos);
 
-        tmpFunc=new funcDecl("parseInt",null);
-        tmpFunc.isMethod=true;
-        tmpFunc.setScope(new functionScope(this));
-        tmpFunc.setReturnType(intInstance);
-        stringType.defineMethod("parseInt",tmpFunc,pos);
+        tmpFunc=new funcDecl("parseInt");
+        tmpFunc.localScope=(new functionScope(this));
+        tmpFunc.type=intInstance;
+        stringType.defMethod("parseInt",tmpFunc,pos);
 
-        tmpFunc=new funcDecl("ord",null);
-        tmpFunc.isMethod=true;
-        tmpFunc.setScope(new functionScope(this));
-        tmpFunc.addParameter(new varEntity("pos",intInstance,false),pos);
-        tmpFunc.setReturnType(intInstance);
-        stringType.defineMethod("ord",tmpFunc,pos);
+        tmpFunc=new funcDecl("ord");
+        tmpFunc.localScope=(new functionScope(this));
+        tmpFunc.addParameter(new varEntity("pos",intInstance),pos);
+        tmpFunc.type=intInstance;
+        stringType.defMethod("ord",tmpFunc,pos);
     }
 
     public void defineClass(String name, Type type, position pos){
         if(types.containsKey(name))
             throw new semanticError("",pos);
-        if(containMember(name,false))
+        if(haveMember(name,false))
             throw new semanticError("",pos);
         types.put(name,type);
     }
@@ -111,6 +107,7 @@ public class globalScope extends Scope {
             throw new semanticError("multiple definition of " + name, pos);
         types.put(name, t);
     }
+
     public Type getTypeFromName(String name, position pos) {
         if (types.containsKey(name))
             return types.get(name);

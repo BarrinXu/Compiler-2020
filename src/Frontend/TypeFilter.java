@@ -7,7 +7,7 @@ import Util.error.semanticError;
 
 public class TypeFilter implements ASTVisitor {
     globalScope gScope;
-    Scope currentScope;
+    Scope curScope;
 
     public TypeFilter(globalScope gScope){
         this.gScope=gScope;
@@ -15,7 +15,7 @@ public class TypeFilter implements ASTVisitor {
 
     @Override
     public void visit(RootNode it) {
-        currentScope=gScope;
+        curScope=gScope;
         if(!it.nodeList.isEmpty())
             it.nodeList.forEach(node->{if(!(node instanceof declarationNode)) node.accept(this);});
     }
@@ -27,30 +27,30 @@ public class TypeFilter implements ASTVisitor {
             func.type=new constructorType();
         else
             func.type=gScope.makeType(it.returnType);
-        currentScope=new functionScope(currentScope);
+        curScope=new functionScope(curScope);
         it.parameters.forEach(node->node.accept(this));
-        func.setScope((functionScope)currentScope);
-        currentScope=currentScope.parentScope();
+        func.localScope=(functionScope)curScope;
+        curScope=curScope.faScope;
     }
 
     @Override
     public void visit(classNode it) {
         classType defClass=(classType)gScope.getTypeFromName(it.name,it.pos);
-        currentScope=defClass.scope();
+        curScope=defClass.localScope;
         it.methods.forEach(node->node.accept(this));
         if(it.constructor!=null)
             it.constructor.accept(this);
-        currentScope=currentScope.parentScope();
+        curScope=curScope.faScope;
     }
 
     @Override
     public void visit(declarationNode it) {
-        varEntity parameter=new varEntity(it.name,gScope.makeType(it.type),false);
+        varEntity parameter=new varEntity(it.name,gScope.makeType(it.type));
         if(parameter.type().isVoid())
             throw new semanticError("",it.pos);
-        if(currentScope instanceof functionScope){
+        if(curScope instanceof functionScope){
             it.entity=parameter;
-            ((functionScope) currentScope).addParameter(parameter,it.pos);
+            ((functionScope) curScope).addParameter(parameter,it.pos);
         }
         else throw new internalError("",it.pos);
     }

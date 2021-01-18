@@ -13,8 +13,5 @@ abstract public class BaseType extends Type{
     public int dim(){
         return 0;
     }
-    @Override
-    public BaseType baseType(){
-        return this;
-    }
+
 }
