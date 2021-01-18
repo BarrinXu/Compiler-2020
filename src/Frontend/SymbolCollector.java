@@ -43,8 +43,6 @@ public class SymbolCollector implements ASTVisitor {
     @Override
     public void visit(functionNode it) {
         var type=new funcDecl(it.name);
-        if(currentScope==gScope&&gScope.hasType(it.name))
-            throw new semanticError("",it.pos);
         it.decl=type;
         if(it.isConstructor)
             currentScope.defConstructor(type,it.pos);
