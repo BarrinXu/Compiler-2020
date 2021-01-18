@@ -29,9 +29,6 @@ public class SemanticChecker implements ASTVisitor {
     public void visit(RootNode it) {
         currentScope=gScope;
         if(!it.nodeList.isEmpty()){
-            collectingClassMember=true;
-            it.nodeList.forEach(node->{if(node instanceof classNode) node.accept(this);});
-            collectingClassMember=false;
             it.nodeList.forEach(node->node.accept(this));
         }
         if(!gScope.containMethod("main",true))
@@ -210,13 +207,10 @@ public class SemanticChecker implements ASTVisitor {
         classType defClass=(classType) gScope.getTypeFromName(it.name,it.pos);
         currentScope=defClass.scope();
         currentClass=defClass;
-        if(collectingClassMember)
-            it.members.forEach(node->node.accept(this));
-        if(!collectingClassMember){
-            it.methods.forEach(node->node.accept(this));
-            if(it.constructor!=null)
-                it.constructor.accept(this);
-        }
+        it.members.forEach(node->node.accept(this));
+        it.methods.forEach(node->node.accept(this));
+        if(it.constructor!=null)
+            it.constructor.accept(this);
         currentClass=null;
         currentScope=currentScope.parentScope();
     }
