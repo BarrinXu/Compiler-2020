@@ -1,15 +1,18 @@
-package Frontend;
+package FrontEnd;
 
 import AST.*;
+import MIR.IRType.ClassType;
+import MIR.Root;
 import Util.*;
 import Util.error.*;
-import java.util.HashMap;
 
 public class SymbolCollector implements ASTVisitor {
     private globalScope gScope;
+    public Root IRRoot;
     Scope curScope=null;
-    public SymbolCollector(globalScope gScope) {
+    public SymbolCollector(globalScope gScope,Root IRRoot) {
         this.gScope = gScope;
+        this.IRRoot=IRRoot;
     }
     @Override
     public void visit(RootNode it) {
@@ -28,7 +31,8 @@ public class SymbolCollector implements ASTVisitor {
         if(!(curScope instanceof globalScope))
             throw new internalError("",it.pos);
         var type=new classType(it.name);
-        curScope=new Scope(curScope);
+        curScope=new classScope(curScope);
+        IRRoot.ClassTypes.put(it.name,new ClassType(it.name));
         it.members.forEach(member->member.accept(this));
         it.methods.forEach(method->method.accept(this));
         if(it.constructor!=null)
@@ -43,6 +47,8 @@ public class SymbolCollector implements ASTVisitor {
     @Override
     public void visit(functionNode it) {
         var type=new funcDecl(it.name);
+        if(curScope!=gScope)
+            type.isClassMethod=true;
         if(curScope==gScope&&gScope.hasType(it.name))
             throw new semanticError("",it.pos);
         it.decl=type;

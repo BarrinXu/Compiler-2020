@@ -3,6 +3,7 @@ package AST;
 import Util.position;
 
 public class continueNode extends StmtNode{
+    public ASTNode dest;
     public continueNode(position pos){
         super(pos);
     }

@@ -1,8 +1,7 @@
-package Frontend;
+package FrontEnd;
 
 import AST.*;
 import Util.*;
-import Util.error.internalError;
 import Util.error.semanticError;
 
 public class TypeFilter implements ASTVisitor {
@@ -45,7 +44,7 @@ public class TypeFilter implements ASTVisitor {
 
     @Override
     public void visit(declarationNode it) {
-        varEntity parameter=new varEntity(it.name,gScope.makeType(it.type));
+        varEntity parameter=new varEntity(it.name,gScope.makeType(it.type),false);
         if(parameter.type().isVoid())
             throw new semanticError("",it.pos);
         it.entity=parameter;

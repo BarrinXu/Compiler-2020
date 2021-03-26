@@ -20,32 +20,32 @@ public class globalScope extends Scope {
         types.put("null",nullInstance);
 
         classType stringType=new classType("string");
-        stringType.localScope=new Scope(this);
+        stringType.localScope=new classScope(this);
         types.put("string",stringType);
         position pos=new position(0,0);
         funcDecl tmpFunc;
 
         tmpFunc=new funcDecl("print");
         tmpFunc.localScope=(new functionScope(this));
-        tmpFunc.addParameter(new varEntity("str",stringType),pos);
+        tmpFunc.addParameter(new varEntity("str",stringType,false),pos);
         tmpFunc.type=voidInstance;
         defMethod("print",tmpFunc,pos);
 
         tmpFunc=new funcDecl("println");
         tmpFunc.localScope=(new functionScope(this));
-        tmpFunc.addParameter(new varEntity("str",stringType),pos);
+        tmpFunc.addParameter(new varEntity("str",stringType,false),pos);
         tmpFunc.type=voidInstance;
         defMethod("println",tmpFunc,pos);
 
         tmpFunc=new funcDecl("printInt");
         tmpFunc.localScope=(new functionScope(this));
-        tmpFunc.addParameter(new varEntity("n",intInstance),pos);
+        tmpFunc.addParameter(new varEntity("n",intInstance,false),pos);
         tmpFunc.type=voidInstance;
         defMethod("printInt",tmpFunc,pos);
 
         tmpFunc=new funcDecl("printlnInt");
         tmpFunc.localScope=(new functionScope(this));
-        tmpFunc.addParameter(new varEntity("n",intInstance),pos);
+        tmpFunc.addParameter(new varEntity("n",intInstance,false),pos);
         tmpFunc.type=voidInstance;
         defMethod("printlnInt",tmpFunc,pos);
 
@@ -61,7 +61,7 @@ public class globalScope extends Scope {
 
         tmpFunc=new funcDecl("toString");
         tmpFunc.localScope=(new functionScope(this));
-        tmpFunc.addParameter(new varEntity("n",intInstance),pos);
+        tmpFunc.addParameter(new varEntity("n",intInstance,false),pos);
         tmpFunc.type=stringType;
         defMethod("toString",tmpFunc,pos);
 
@@ -71,25 +71,29 @@ public class globalScope extends Scope {
         defMethod("size",tmpFunc,pos);
 
         tmpFunc=new funcDecl("length");
+        tmpFunc.isClassMethod=true;
         tmpFunc.localScope=(new functionScope(this));
         tmpFunc.type=intInstance;
         stringType.defMethod("length",tmpFunc,pos);
 
         tmpFunc=new funcDecl("substring");
+        tmpFunc.isClassMethod=true;
         tmpFunc.localScope=(new functionScope(this));
-        tmpFunc.addParameter(new varEntity("left",intInstance),pos);
-        tmpFunc.addParameter(new varEntity("right",intInstance),pos);
+        tmpFunc.addParameter(new varEntity("left",intInstance,false),pos);
+        tmpFunc.addParameter(new varEntity("right",intInstance,false),pos);
         tmpFunc.type=stringType;
         stringType.defMethod("substring",tmpFunc,pos);
 
         tmpFunc=new funcDecl("parseInt");
+        tmpFunc.isClassMethod=true;
         tmpFunc.localScope=(new functionScope(this));
         tmpFunc.type=intInstance;
         stringType.defMethod("parseInt",tmpFunc,pos);
 
         tmpFunc=new funcDecl("ord");
+        tmpFunc.isClassMethod=true;
         tmpFunc.localScope=(new functionScope(this));
-        tmpFunc.addParameter(new varEntity("pos",intInstance),pos);
+        tmpFunc.addParameter(new varEntity("pos",intInstance,false),pos);
         tmpFunc.type=intInstance;
         stringType.defMethod("ord",tmpFunc,pos);
     }
@@ -112,6 +116,10 @@ public class globalScope extends Scope {
         if (types.containsKey(name))
             return types.get(name);
         throw new semanticError("no such type: " + name, pos);
+    }
+
+    public Type getStringType(){
+        return types.get("string");
     }
 
     public Type makeType(typeNode node){

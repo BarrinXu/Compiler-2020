@@ -30,7 +30,10 @@ public class ArrayType extends Type {
         return type.isNull()||(dim==type.dim()&&baseType.sameType(((ArrayType)type).baseType));
     }
 
-
+    @Override
+    public int size() {
+        return 32;
+    }
 
 
 }

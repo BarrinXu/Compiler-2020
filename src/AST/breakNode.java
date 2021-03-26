@@ -1,6 +1,8 @@
 package AST;
 import Util.position;
 public class breakNode extends StmtNode{
+    public ASTNode dest;
+
     public breakNode(position pos){
         super(pos);
     }

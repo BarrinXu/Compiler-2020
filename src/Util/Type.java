@@ -11,6 +11,8 @@ abstract public class Type {
     public TypeCategory typeCategory;
 
     public abstract boolean sameType(Type it);
+    public abstract int size();
+
 
     public boolean isNull(){
         return typeCategory==TypeCategory.NULL;

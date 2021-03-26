@@ -1,27 +1,33 @@
 import AST.RootNode;
-import Frontend.ASTBuilder;
-import Frontend.SemanticChecker;
-import Frontend.SymbolCollector;
-import Frontend.TypeFilter;
+import BackEnd.*;
+import FrontEnd.ASTBuilder;
+import FrontEnd.SemanticChecker;
+import FrontEnd.SymbolCollector;
+import FrontEnd.TypeFilter;
+import MIR.Root;
 import Parser.YxLexer;
 import Parser.YxParser;
 import Util.YxErrorListener;
 import Util.error.error;
 import Util.globalScope;
+import assembly.LRoot;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.PrintStream;
 
 
 public class Main {
     public static void main(String[] args) throws Exception{
 
-        //String name = "test.yx";
+        String name = "test.mx";
         InputStream input = System.in;
-
+        //InputStream input=new FileInputStream(name);
+        //PrintStream stream=new PrintStream("D:\\Barrin\\Documents\\Virtual Machines\\Ubuntu 64 位\\share\\test.s");
+        PrintStream stream=new PrintStream("output.s");
         try {
             RootNode ASTRoot;
             globalScope gScope = new globalScope();
@@ -36,9 +42,19 @@ public class Main {
             ASTBuilder astBuilder = new ASTBuilder();
             ASTRoot = (RootNode)astBuilder.visit(parseTreeRoot);
 
-            new SymbolCollector(gScope).visit(ASTRoot);
+            Root IRRoot=new Root();
+
+            new SymbolCollector(gScope,IRRoot).visit(ASTRoot);
             new TypeFilter(gScope).visit(ASTRoot);
-            new SemanticChecker(gScope).visit(ASTRoot);
+            new SemanticChecker(gScope,IRRoot).visit(ASTRoot);
+            new IRBuilder(gScope,IRRoot).visit(ASTRoot);
+
+            new MemToReg(IRRoot).solve();
+
+            new SolvePhi(IRRoot).solve();
+            LRoot lRoot=new InstSelection(IRRoot).solve();
+            new RegAlloc(lRoot).solve();
+            new PrintAsm(lRoot,stream).solve();
         } catch (error er) {
             System.err.println(er.toString());
             throw new RuntimeException();

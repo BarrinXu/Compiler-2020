@@ -1,9 +1,8 @@
-package Frontend;
+package FrontEnd;
 
 import AST.*;
 import Parser.YxBaseVisitor;
 import Parser.YxParser;
-import Util.Type;
 import Util.position;
 import AST.binaryExprNode.binaryOpType;
 import AST.prefixExprNode.prefixOpType;

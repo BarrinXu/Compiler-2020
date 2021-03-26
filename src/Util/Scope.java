@@ -62,6 +62,14 @@ public class Scope {
             throw new semanticError("",pos);
     }
 
+    public varEntity getMemberEntity(String name,position pos,boolean searchUpon){
+        if(members.containsKey(name))
+            return members.get(name);
+        else if(faScope!=null&&searchUpon)
+            return faScope.getMemberEntity(name,pos,true);
+        else
+            throw new semanticError("",pos);
+    }
 
     public funcDecl getMethodType(String name, position pos, boolean searchUpon){
         if(methods.containsKey(name))

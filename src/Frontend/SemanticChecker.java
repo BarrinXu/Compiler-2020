@@ -1,6 +1,10 @@
-package Frontend;
+package FrontEnd;
 
 import AST.*;
+import MIR.IRType.ClassType;
+import MIR.IRType.IRBaseType;
+import MIR.IRType.PointerType;
+import MIR.Root;
 import Util.*;
 import Util.error.semanticError;
 
@@ -10,6 +14,7 @@ import java.util.Stack;
 public class SemanticChecker implements ASTVisitor {
     public Scope curScope;
     public globalScope gScope;
+    public Root IRRoot;
 
     public classType currentClass=null;
     public Type currentReturnType=null;
@@ -19,8 +24,11 @@ public class SemanticChecker implements ASTVisitor {
     public boolean checkClassMember=false;
     public boolean haveReturn=false;
 
-    public SemanticChecker(globalScope gScope) {
+    public ClassType nowIRClass=null;
+
+    public SemanticChecker(globalScope gScope,Root IRRoot) {
         curScope = this.gScope = gScope;
+        this.IRRoot=IRRoot;
     }
 
 
@@ -149,10 +157,20 @@ public class SemanticChecker implements ASTVisitor {
 
     @Override
     public void visit(declarationNode it) {
-        varEntity entity=new varEntity(it.name,gScope.makeType(it.type));
+        varEntity entity=new varEntity(it.name,gScope.makeType(it.type),curScope==gScope);
         it.entity=entity;
         if(entity.type().isVoid())
             throw new semanticError("",it.pos);
+        if(curScope instanceof classScope){
+            entity.isMember=true;
+            entity.setIndex(currentClass.addMember(entity.type));
+        }
+        if(nowIRClass!=null){
+            IRBaseType type=IRRoot.getType(it.entity.type);
+            if(type instanceof ClassType)
+                type=new PointerType(type,false);
+            nowIRClass.members.add(type);
+        }
         if(it.expr!=null){
             it.expr.accept(this);
             if(!it.expr.type.sameType(entity.type()))
@@ -205,9 +223,11 @@ public class SemanticChecker implements ASTVisitor {
     public void visit(classNode it) {
         classType defClass=(classType) gScope.getTypeFromName(it.name,it.pos);
         curScope=defClass.localScope;
+        nowIRClass=IRRoot.ClassTypes.get(it.name);
         currentClass=defClass;
         if(checkClassMember)
             it.members.forEach(node->node.accept(this));
+        nowIRClass=null;
         if(!checkClassMember){
             it.methods.forEach(node->node.accept(this));
             if(it.constructor!=null)
@@ -242,7 +262,9 @@ public class SemanticChecker implements ASTVisitor {
             throw new semanticError("",it.pos);
         classType type=(classType)it.call.type;
         if(type.localScope.haveMember(it.member,false)){
+            //Can change!!!
             it.type=type.localScope.getMemberType(it.member,it.pos,false);
+            it.entity=type.localScope.getMemberEntity(it.member,it.pos,false);
         }
         else
             throw new semanticError("",it.pos);
@@ -297,12 +319,14 @@ public class SemanticChecker implements ASTVisitor {
     public void visit(breakNode it) {
         if(loop.isEmpty())
                 throw new semanticError("",it.pos);
+        it.dest=loop.peek();
     }
 
     @Override
     public void visit(continueNode it) {
         if(loop.isEmpty())
             throw new semanticError("",it.pos);
+        it.dest=loop.peek();
     }
 
     @Override
@@ -323,6 +347,7 @@ public class SemanticChecker implements ASTVisitor {
     @Override
     public void visit(identifierNode it) {
         it.type=curScope.getMemberType(it.name,it.pos,true);
+        it.entity=curScope.getMemberEntity(it.name,it.pos,true);
     }
 
     @Override
