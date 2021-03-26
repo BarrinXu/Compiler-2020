@@ -22,6 +22,14 @@ import java.io.PrintStream;
 
 public class Main {
     public static void main(String[] args) throws Exception{
+        boolean codegen=true;
+        if(args.length>0){
+            for(var arg:args){
+                switch (arg){
+                    case "-semantic":codegen=false;break;
+                }
+            }
+        }
 
         String name = "test.mx";
         InputStream input = System.in;
@@ -47,14 +55,17 @@ public class Main {
             new SymbolCollector(gScope,IRRoot).visit(ASTRoot);
             new TypeFilter(gScope).visit(ASTRoot);
             new SemanticChecker(gScope,IRRoot).visit(ASTRoot);
-            new IRBuilder(gScope,IRRoot).visit(ASTRoot);
+            if(codegen){
+                new IRBuilder(gScope,IRRoot).visit(ASTRoot);
 
-            new MemToReg(IRRoot).solve();
+                new MemToReg(IRRoot).solve();
 
-            new SolvePhi(IRRoot).solve();
-            LRoot lRoot=new InstSelection(IRRoot).solve();
-            new RegAlloc(lRoot).solve();
-            new PrintAsm(lRoot,stream).solve();
+                new SolvePhi(IRRoot).solve();
+                LRoot lRoot=new InstSelection(IRRoot).solve();
+                new RegAlloc(lRoot).solve();
+                new PrintAsm(lRoot,stream).solve();
+            }
+
         } catch (error er) {
             System.err.println(er.toString());
             throw new RuntimeException();
