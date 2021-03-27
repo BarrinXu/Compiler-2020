@@ -7,6 +7,8 @@ import assembly.LOperand.LGlobalReg;
 import assembly.LOperand.Reg;
 import assembly.LOperand.StackImm;
 
+import static java.lang.Math.abs;
+
 public class Ld extends BaseInst{
     public Reg address;
     public Imm offset;
@@ -28,6 +30,10 @@ public class Ld extends BaseInst{
             dataType="w";
         else
             dataType="h";
+        if((!(address instanceof LGlobalReg))&&abs(offset.val)>offset.limit){
+            String tmp=offset.workOverLimit(dest,address).toString();
+            return tmp+"\t"+"l"+dataType+" "+dest+", "+offset+"("+dest+")";
+        }
         return "l"+dataType+" "+dest+", "+((address instanceof LGlobalReg)?address:offset+"("+address+")");
     }
 

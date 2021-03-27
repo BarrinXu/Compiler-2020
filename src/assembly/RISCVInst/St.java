@@ -1,9 +1,9 @@
 package assembly.RISCVInst;
 
 import assembly.LIRBlock;
-import assembly.LOperand.Imm;
-import assembly.LOperand.Reg;
-import assembly.LOperand.StackImm;
+import assembly.LOperand.*;
+
+import static java.lang.Math.abs;
 
 public class St extends BaseInst{
     public Reg address;
@@ -28,6 +28,10 @@ public class St extends BaseInst{
             dataType="w";
         else
             dataType="h";
+        if(abs(offset.val)>offset.limit){
+            String tmp=offset.workOverLimit(new RealReg("t3"),address).toString();
+            return tmp+"\t"+"s"+dataType+" "+val+", "+offset+"("+"t3"+")";
+        }
         return "s"+dataType+" "+val+", "+offset+"("+address+")";
     }
 

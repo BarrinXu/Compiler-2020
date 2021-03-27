@@ -2,8 +2,11 @@ package assembly.RISCVInst;
 
 import assembly.LIRBlock;
 import assembly.LOperand.Imm;
+import assembly.LOperand.RealReg;
 import assembly.LOperand.Reg;
 import assembly.LOperand.StackImm;
+
+import static java.lang.Math.abs;
 
 public class IType extends BaseInst{
     public Reg rs1;
@@ -18,6 +21,11 @@ public class IType extends BaseInst{
     }
     @Override
     public String toString(){
+        if(abs(imm.val)>imm.limit){
+            assert opCode==CalOpType.add;
+            String tmp=imm.workOverLimit(dest,rs1).toString();
+            return tmp+"\t"+opCode+"i "+dest+", "+dest+", "+imm.val;
+        }
         return opCode+"i "+dest+", "+rs1+", "+imm.val;
     }
 
