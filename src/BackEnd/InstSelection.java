@@ -286,24 +286,40 @@ public class InstSelection {
                 block.pushInst(new Mv(MirToLir(inst.reg),block,transReg));
         }
         else if(inst instanceof GetElementPtr){
-            VirReg arrayBitOffset=new VirReg(cnt++,4);
-            block.pushInst(new RType(arrayBitOffset,block,MirToLir(((GetElementPtr) inst).arrayOffset),MirToLir(new ConstInt(((GetElementPtr) inst).type.size()/8,32)), BaseInst.CalOpType.mul));
-            VirReg nowPtr =new VirReg(4,cnt++);
-            block.pushInst(new RType(nowPtr,block,MirToLir(((GetElementPtr) inst).pointer),arrayBitOffset, BaseInst.CalOpType.add));
-            VirReg finalPtr;
+            VirReg destIdx=new VirReg(cnt++,4);
+            VirReg destMul;
+            if(((GetElementPtr) inst).arrayOffset instanceof ConstInt){
+                int kth=((ConstInt) ((GetElementPtr) inst).arrayOffset).val;
+                if(kth!=0){
+                    block.pushInst(new RType(destIdx,block,MirToLir(((GetElementPtr) inst).pointer),MirToLir(new ConstInt(kth*((GetElementPtr) inst).type.size()/8,32)), BaseInst.CalOpType.add));
+                }
+                else{
+                    Reg origin=MirToLir(((GetElementPtr) inst).pointer);
+                    if(origin instanceof LGlobalReg)
+                        block.pushInst(new La(destIdx,block, (LGlobalReg) origin));
+                    else
+                        block.pushInst(new Mv(destIdx,block,MirToLir(((GetElementPtr) inst).pointer)));
+                }
+            }
+            else{
+                destMul=new VirReg(cnt++,4);
+                block.pushInst(new RType(destMul,block,MirToLir(((GetElementPtr) inst).arrayOffset),MirToLir(new ConstInt(((GetElementPtr) inst).type.size()/8,32)), BaseInst.CalOpType.mul));
+                block.pushInst(new RType(destIdx,block,MirToLir(((GetElementPtr) inst).pointer),destMul, BaseInst.CalOpType.add));
+            }
+            Reg finalPtr;
             if(((GetElementPtr) inst).elementOffset==null)
-                finalPtr=nowPtr;
+                finalPtr=destIdx;
             else{
                 int kth=((GetElementPtr) inst).elementOffset.val;
                 if(kth==0)
-                    finalPtr=nowPtr;
+                    finalPtr=destIdx;
                 else{
                     assert ((GetElementPtr) inst).pointer.type instanceof PointerType;
                     int elementBitOffset=0;
                     if(((PointerType) ((GetElementPtr) inst).pointer.type).dest instanceof ClassType)
                         elementBitOffset=((ClassType) ((PointerType) ((GetElementPtr) inst).pointer.type).dest).getElementBitOffset(kth);
                     finalPtr=new VirReg(cnt++,4);
-                    block.pushInst(new RType(finalPtr,block,nowPtr,MirToLir(new ConstInt(elementBitOffset,32)), BaseInst.CalOpType.add));
+                    block.pushInst(new RType(finalPtr,block,destIdx,MirToLir(new ConstInt(elementBitOffset,32)), BaseInst.CalOpType.add));
                 }
             }
             if(regMap.containsKey(inst.reg))
