@@ -17,6 +17,7 @@ import Util.globalScope;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 public class IRBuilder implements ASTVisitor {
 
@@ -28,6 +29,7 @@ public class IRBuilder implements ASTVisitor {
 
 
     public HashSet<IRBlock>reachBlocks=new HashSet<>();
+    public HashSet<IRBlock>returnReachBlocks=new HashSet<>();
     public HashMap<IRBlock, PhiNode>phiMap=new HashMap<>();
     public ArrayList<Return> returnInsts =new ArrayList<>();
     public int symbolCnt=0;
@@ -122,10 +124,20 @@ public class IRBuilder implements ASTVisitor {
         nowFunction=IRRoot.getFunction("INIT");
         //maybe done
         reachBlocks=new HashSet<>();
+        returnReachBlocks=new HashSet<>();
         dfs(nowFunction.inBlock);
+        for (var iter = returnInsts.iterator(); iter.hasNext();) {
+            var nowInst = iter.next();
+            if (returnInstCheck(nowInst.block)) {
+                iter.remove();
+                nowInst.block.deleteTerminate();
+            }
+        }
+        reachBlocks.removeIf(block -> !block.terminate);
         //maybe done
         nowFunction.blocks.addAll(reachBlocks);
         reachBlocks=null;
+        returnReachBlocks=null;
         //to be done
 
     }
@@ -545,6 +557,20 @@ public class IRBuilder implements ASTVisitor {
         }
     }
 
+    public boolean returnInstCheck(IRBlock block){
+        returnReachBlocks.add(block);
+        var backupFas=new ArrayList<>(block.fas);
+        backupFas.forEach(fa->{
+            if(!returnReachBlocks.contains(fa)){
+                if(returnInstCheck(fa))
+                    fa.deleteTerminate();
+            }
+        });
+        if(reachBlocks.contains(block))
+            return false;
+        return block.fas.isEmpty();
+    }
+
     @Override
     public void visit(functionNode it) {
         symbolCnt=0;
@@ -584,9 +610,19 @@ public class IRBuilder implements ASTVisitor {
         }
 
         reachBlocks=new HashSet<>();
+        returnReachBlocks=new HashSet<>();
         dfs(nowFunction.inBlock);
+        for(var iter=returnInsts.iterator(); iter.hasNext();){
+            var nowInst=iter.next();
+            if(returnInstCheck(nowInst.block)){
+                iter.remove();
+                nowInst.block.deleteTerminate();
+            }
+        }
+        reachBlocks.removeIf(block -> !block.terminate);
         nowFunction.blocks.addAll(reachBlocks);
         reachBlocks=null;
+        returnReachBlocks=null;
 
         if(returnInsts.size()>1){
             IRBlock finalReturn=new IRBlock("finalReturn");

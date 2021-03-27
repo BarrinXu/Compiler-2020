@@ -35,6 +35,8 @@ public class DomAnalysis {
             var nowBlock=dfn.get(i);
             nowBlock.fas.forEach(fa->{
                 var evalBlock=evaluate(fa);
+                if(evalBlock==null)
+                    System.out.println("!!!");
                 if(dfsID.get(sDom.get(nowBlock))>dfsID.get(sDom.get(evalBlock)))
                     sDom.put(nowBlock,sDom.get(evalBlock));
             });
