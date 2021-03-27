@@ -463,7 +463,8 @@ public class IRBuilder implements ASTVisitor {
         }
 
         nowBlock=bodyBlock;
-        it.loopBody.accept(this);
+        if(it.loopBody!=null)
+            it.loopBody.accept(this);
 
         if(!nowBlock.terminate)
             nowBlock.setTerminate(new Jump(nowBlock,updBlock));
