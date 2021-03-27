@@ -301,14 +301,14 @@ public class IRBuilder implements ASTVisitor {
             case andand:break;
             case oror:break;
             case equal:{
-                if(it.lhs.type.isInt()||it.lhs.type.isBool()||it.lhs.type.isNull())
+                if(!it.lhs.type.sameType(gScope.getStringType()))
                     cmpOpCode= Cmp.CmpOpType.eq;
                 else
                     string_builtin_Call= IRRoot.getFunction("BI_str_EQ");
                 break;
             }
             case notequal:{
-                if(it.lhs.type.isInt()||it.lhs.type.isBool()||it.lhs.type.isNull())
+                if(!it.lhs.type.sameType(gScope.getStringType()))
                     cmpOpCode= Cmp.CmpOpType.ne;
                 else
                     string_builtin_Call= IRRoot.getFunction("BI_str_NEQ");
