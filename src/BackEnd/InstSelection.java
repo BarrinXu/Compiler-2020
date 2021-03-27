@@ -218,12 +218,12 @@ public class InstSelection {
                 }
                 case eq -> {
                     VirReg tmp=new VirReg(cnt++,4);
-                    block.pushInst(new RType(MirToLir(inst.reg),block,MirToLir(((Cmp) inst).lhs),MirToLir(((Cmp) inst).rhs), BaseInst.CalOpType.xor));
+                    block.pushInst(new RType(tmp,block,MirToLir(((Cmp) inst).lhs),MirToLir(((Cmp) inst).rhs), BaseInst.CalOpType.xor));
                     block.pushInst(new Sz(MirToLir(inst.reg),block,tmp, BaseInst.CmpOpType.beq));
                 }
                 case ne -> {
                     VirReg tmp=new VirReg(cnt++,4);
-                    block.pushInst(new RType(MirToLir(inst.reg),block,MirToLir(((Cmp) inst).lhs),MirToLir(((Cmp) inst).rhs), BaseInst.CalOpType.xor));
+                    block.pushInst(new RType(tmp,block,MirToLir(((Cmp) inst).lhs),MirToLir(((Cmp) inst).rhs), BaseInst.CalOpType.xor));
                     block.pushInst(new Sz(MirToLir(inst.reg),block,tmp, BaseInst.CmpOpType.bne));
                 }
             }
