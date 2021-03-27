@@ -21,19 +21,21 @@ public class RegAlloc {
         t2=root.realRegs.get(7);
     }
     public int maxStack=0;
+    public LFunction nowFunc;
     public BaseInst loadVirReg(VirReg reg, RealReg rd, LIRBlock block){
-        maxStack=max(maxStack,reg.index*4+4);
-        return new Ld(rd,block,sp,new Imm(reg.index*4),4);
+        maxStack=max(maxStack,reg.index*4+4+nowFunc.parametersOffset);
+        return new Ld(rd,block,sp,new Imm(reg.index*4+nowFunc.parametersOffset),4);
     }
     public BaseInst storeVirReg(VirReg reg,LIRBlock block){
-        maxStack=max(maxStack,reg.index*4+4);
-        return new St(block,sp,new Imm(reg.index*4),t2,4);
+        maxStack=max(maxStack,reg.index*4+4+nowFunc.parametersOffset);
+        return new St(block,sp,new Imm(reg.index*4+nowFunc.parametersOffset),t2,4);
     }
     public void solve(){
         root.functions.forEach(this::solveFunc);
     }
     public void solveFunc(LFunction func){
         maxStack=0;
+        nowFunc=func;
         func.blocks.forEach(block -> {
             for(BaseInst inst=block.head; inst!=null; inst=inst.nxt){
                 if(inst instanceof Bz){

@@ -129,7 +129,7 @@ public class InstSelection {
         nowLFunction=Lfunc;
         ArrayList<VirReg>CalleeVirRegLists=new ArrayList<>();
 
-        StackImm stackImm=new StackImm(-4);
+        StackImm stackImm=new StackImm(0);
         stackImm.reverse=true;
         inBlock.pushInst(new IType(LRoot.realRegs.get(2),inBlock,LRoot.realRegs.get(2),stackImm, BaseInst.CalOpType.add));
 
@@ -163,7 +163,7 @@ public class InstSelection {
         //for(int i=0; i<LRoot.calleeRegs.size(); i++)
         //   outBlock.pushInst(new Mv(LRoot.calleeRegs.get(i),outBlock,CalleeVirRegLists.get(i)));
         outBlock.pushInst(new Mv(LRoot.realRegs.get(1),outBlock,x1_backup));
-        outBlock.pushInst(new IType(LRoot.realRegs.get(2),outBlock,LRoot.realRegs.get(2),new StackImm(4), BaseInst.CalOpType.add));
+        outBlock.pushInst(new IType(LRoot.realRegs.get(2),outBlock,LRoot.realRegs.get(2),new StackImm(0), BaseInst.CalOpType.add));
         outBlock.pushInst(new Ret(outBlock,LRoot));
         Lfunc.regCnt=cnt;
     }
