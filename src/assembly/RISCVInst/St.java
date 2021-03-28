@@ -29,8 +29,8 @@ public class St extends BaseInst{
         else
             dataType="h";
         if(abs(offset.val)>offset.limit){
-            String tmp=offset.workOverLimit(new RealReg("t3"),address).toString();
-            return tmp+"\t"+"s"+dataType+" "+val+", "+offset+"("+"t3"+")";
+            String tmp=offset.workOverLimit(new RealReg("t6"),address).toString();
+            return tmp+"\t"+"s"+dataType+" "+val+", "+offset+"("+"t6"+")";
         }
         return "s"+dataType+" "+val+", "+offset+"("+address+")";
     }

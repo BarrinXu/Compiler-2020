@@ -62,7 +62,8 @@ public class Main {
 
                 new SolvePhi(IRRoot).solve();
                 LRoot lRoot=new InstSelection(IRRoot).solve();
-                new RegAlloc(lRoot).solve();
+                //new RegAlloc(lRoot).solve();
+                new PremiumRegAlloc(lRoot).solve();
                 new PrintAsm(lRoot,stream).solve();
             }
 
