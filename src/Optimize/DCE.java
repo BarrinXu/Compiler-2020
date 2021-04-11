@@ -1,5 +1,6 @@
 package Optimize;
 
+import MIR.IRInst.Phi;
 import MIR.Root;
 
 public class DCE {
@@ -23,6 +24,10 @@ public class DCE {
                         boolean haveCircle=true;
                         while(true){
                             if(nowReg.usedInsts.size()!=1) {
+                                haveCircle=false;
+                                break;
+                            }
+                            if(nowReg.usedInsts.iterator().next() instanceof Phi && nowReg.usedInsts.iterator().next()!= phiInst.getValue()){
                                 haveCircle=false;
                                 break;
                             }
