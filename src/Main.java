@@ -5,6 +5,7 @@ import FrontEnd.SemanticChecker;
 import FrontEnd.SymbolCollector;
 import FrontEnd.TypeFilter;
 import MIR.Root;
+import Optimize.Optimizer;
 import Parser.YxLexer;
 import Parser.YxParser;
 import Util.YxErrorListener;
@@ -23,6 +24,7 @@ import java.io.PrintStream;
 public class Main {
     public static void main(String[] args) throws Exception{
         boolean codegen=true;
+        boolean doOptimize=true;
         if(args.length>0){
             for(var arg:args){
                 switch (arg){
@@ -60,6 +62,8 @@ public class Main {
 
                 new MemToReg(IRRoot).solve();
 
+                if(doOptimize)
+                    new Optimizer(IRRoot).solve();
                 new SolvePhi(IRRoot).solve();
                 LRoot lRoot=new InstSelection(IRRoot).solve();
                 //new RegAlloc(lRoot).solve();
