@@ -3,6 +3,8 @@ package assembly.RISCVInst;
 import assembly.LIRBlock;
 import assembly.LOperand.*;
 
+import java.util.HashSet;
+
 import static java.lang.Math.abs;
 
 public class St extends BaseInst{
@@ -39,5 +41,22 @@ public class St extends BaseInst{
     public void addStackSize(int stackSize) {
         if(offset instanceof StackImm)
             offset=new Imm(stackSize+offset.val);
+    }
+
+    @Override
+    public HashSet<Reg> usedRegSet() {
+        HashSet<Reg>tmp=new HashSet<>();
+        if(!(address instanceof LGlobalReg))
+            tmp.add(address);
+        tmp.add(val);
+        return tmp;
+    }
+
+    @Override
+    public void replaceUse(Reg origin, Reg to) {
+        if(address==origin)
+            address=to;
+        if(val==origin)
+            val=to;
     }
 }

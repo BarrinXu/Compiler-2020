@@ -16,8 +16,9 @@ public class Store extends Inst{
     }
 
     @Override
-    public void remove() {
-        block.removeInst(this);
+    public void remove(boolean delete) {
+        if(delete)
+            block.removeInst(this);
         val.removeUsedInst(this);
         address.removeUsedInst(this);
     }

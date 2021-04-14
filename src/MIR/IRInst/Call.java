@@ -20,8 +20,9 @@ public class Call extends Inst{
     }
 
     @Override
-    public void remove() {
-        block.removeInst(this);
+    public void remove(boolean delete) {
+        if(delete)
+            block.removeInst(this);
         parameters.forEach(parameter->{
             parameter.removeUsedInst(this);
         });

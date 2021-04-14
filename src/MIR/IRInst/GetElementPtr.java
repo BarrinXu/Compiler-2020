@@ -24,8 +24,9 @@ public class GetElementPtr extends Inst{
     }
 
     @Override
-    public void remove() {
-        block.removeInst(this);
+    public void remove(boolean delete) {
+        if(delete)
+            block.removeInst(this);
         pointer.removeUsedInst(this);
         arrayOffset.removeUsedInst(this);
         if(elementOffset!=null)

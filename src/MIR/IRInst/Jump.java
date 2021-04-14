@@ -12,8 +12,9 @@ public class Jump extends Inst{
     }
 
     @Override
-    public void remove() {
-        block.deleteTerminate();
+    public void remove(boolean delete) {
+        if(delete)
+            block.deleteTerminate();
     }
 
     @Override

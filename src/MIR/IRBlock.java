@@ -14,6 +14,7 @@ public class IRBlock {
     public IRBlock imDom=null;
     public HashSet<IRBlock> domBlocks=new HashSet<>();
     public Inst head=null, tail=null;
+    public int loopDep;
     public String name;
 
     public boolean terminate;
@@ -91,7 +92,7 @@ public class IRBlock {
             deleteSon(((Branch) tmp).elseDestBlock);
         }
         tmp.deleteInList();
-        tmp.remove();
+        tmp.remove(true);
     }
 
     public void deleteSon(IRBlock son){

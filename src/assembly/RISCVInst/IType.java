@@ -6,6 +6,8 @@ import assembly.LOperand.RealReg;
 import assembly.LOperand.Reg;
 import assembly.LOperand.StackImm;
 
+import java.util.HashSet;
+
 import static java.lang.Math.abs;
 
 public class IType extends BaseInst{
@@ -33,5 +35,18 @@ public class IType extends BaseInst{
     public void addStackSize(int stackSize) {
         if(imm instanceof StackImm)
             imm=new Imm(stackSize*(((StackImm) imm).reverse?-1:1)+ imm.val);
+    }
+
+    @Override
+    public HashSet<Reg> usedRegSet() {
+        HashSet<Reg>tmp=new HashSet<>();
+        tmp.add(rs1);
+        return tmp;
+    }
+
+    @Override
+    public void replaceUse(Reg origin, Reg to) {
+        if(rs1==origin)
+            rs1=to;
     }
 }

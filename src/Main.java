@@ -24,20 +24,21 @@ import java.io.PrintStream;
 public class Main {
     public static void main(String[] args) throws Exception{
         boolean codegen=true;
-        boolean doOptimize=true;
+        boolean doOptimize=false;
         if(args.length>0){
             for(var arg:args){
                 switch (arg){
                     case "-semantic":codegen=false;break;
+                    case "-optimize":doOptimize=true;break;
                 }
             }
         }
 
         String name = "test.mx";
-        InputStream input = System.in;
-        //InputStream input=new FileInputStream(name);
-        //PrintStream stream=new PrintStream("D:\\Barrin\\Documents\\Virtual Machines\\Ubuntu 64 位\\share\\test.s");
-        PrintStream stream=new PrintStream("output.s");
+        //InputStream input = System.in;
+        InputStream input=new FileInputStream(name);
+        PrintStream stream=new PrintStream("D:\\Barrin\\Documents\\Virtual Machines\\Ubuntu 64 位\\share\\test.s");
+        //PrintStream stream=new PrintStream("output.s");
         try {
             RootNode ASTRoot;
             globalScope gScope = new globalScope();
@@ -67,7 +68,8 @@ public class Main {
                 new SolvePhi(IRRoot).solve();
                 LRoot lRoot=new InstSelection(IRRoot).solve();
                 //new RegAlloc(lRoot).solve();
-                new PremiumRegAlloc(lRoot).solve();
+                //new PremiumRegAlloc(lRoot).solve();
+                new UltimateRegAlloc(lRoot).solve();
                 new PrintAsm(lRoot,stream).solve();
             }
 

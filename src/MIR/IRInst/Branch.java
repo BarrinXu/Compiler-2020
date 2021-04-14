@@ -18,8 +18,9 @@ public class Branch extends Inst{
 
 
     @Override
-    public void remove() {
-        block.deleteTerminate();
+    public void remove(boolean delete) {
+        if(delete)
+            block.deleteTerminate();
         condition.removeUsedInst(this);
     }
 

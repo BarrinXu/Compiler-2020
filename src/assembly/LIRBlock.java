@@ -1,13 +1,20 @@
 package assembly;
 
+import assembly.LOperand.Reg;
 import assembly.RISCVInst.BaseInst;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class LIRBlock {
     public ArrayList<LIRBlock> fas=new ArrayList<>();
     public ArrayList<LIRBlock> sons=new ArrayList<>();
+
     public LIRBlock nxt=null;
+
+    public HashSet<Reg> liveIn=new HashSet<Reg>();
+    public HashSet<Reg> liveOut=new HashSet<Reg>();
+
     public boolean hasLst=false;
 
     public String name;

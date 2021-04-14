@@ -20,8 +20,9 @@ public class Binary extends Inst{
         reg.defInst=this;
     }
     @Override
-    public void remove() {
-        block.removeInst(this);
+    public void remove(boolean delete) {
+        if(delete)
+            block.removeInst(this);
         lhs.removeUsedInst(this);
         rhs.removeUsedInst(this);
     }

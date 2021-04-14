@@ -5,6 +5,8 @@ import assembly.LOperand.Imm;
 import assembly.LOperand.Reg;
 import assembly.LOperand.StackImm;
 
+import java.util.HashSet;
+
 public class Li extends BaseInst{
     public Imm val;
 
@@ -22,5 +24,16 @@ public class Li extends BaseInst{
     public void addStackSize(int stackSize) {
         if(val instanceof StackImm)
             val=new Imm(val.val+stackSize);
+    }
+
+    @Override
+    public HashSet<Reg> usedRegSet() {
+        HashSet<Reg>tmp=new HashSet<>();
+        return tmp;
+    }
+
+    @Override
+    public void replaceUse(Reg origin, Reg to) {
+
     }
 }

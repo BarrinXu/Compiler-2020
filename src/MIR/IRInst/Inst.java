@@ -26,7 +26,7 @@ abstract public class Inst {
             block.head = nxt;
     }
 
-     abstract public void remove();
+    abstract public void remove(boolean delete);
 
     abstract public void modifyReg(Register oriReg, IRBaseOperand to);
 

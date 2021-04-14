@@ -4,6 +4,8 @@ import assembly.LIRBlock;
 import assembly.LOperand.LGlobalReg;
 import assembly.LOperand.Reg;
 
+import java.util.HashSet;
+
 public class La extends BaseInst{
     public LGlobalReg oriReg;
 
@@ -19,6 +21,17 @@ public class La extends BaseInst{
 
     @Override
     public void addStackSize(int stackSize) {
+
+    }
+
+    @Override
+    public HashSet<Reg> usedRegSet() {
+        HashSet<Reg>tmp=new HashSet<>();
+        return tmp;
+    }
+
+    @Override
+    public void replaceUse(Reg origin, Reg to) {
 
     }
 }

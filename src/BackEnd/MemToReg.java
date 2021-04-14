@@ -53,7 +53,7 @@ public class MemToReg {
                     if(address instanceof Register&&func.registers.contains(address)){
                         if(allocStores.get(inst.block).containsKey(address)){
                             replaceMap.put(inst.reg,allocStores.get(inst.block).get(address));
-                            inst.remove();
+                            inst.remove(true);
                         }
                         else
                             allocLoads.get(inst.block).add((Load) inst);
@@ -64,7 +64,7 @@ public class MemToReg {
                     if(address instanceof Register&&func.registers.contains(address)){
                         haveDefBlocks.add(inst.block);
                         allocStores.get(inst.block).put((Register) address,((Store) inst).val);
-                        inst.remove();
+                        inst.remove(true);
                     }
                 }
                 inst=nxtInst;
@@ -121,7 +121,7 @@ public class MemToReg {
                         updTo=allocStores.get(nowBlock).get(updVar);
                     }
                     replaceMap.put(loadInst.reg, solveReplace(replaceMap,updTo));
-                    loadInst.remove();
+                    loadInst.remove(true);
                 });
             }
         });

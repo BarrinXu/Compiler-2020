@@ -9,7 +9,7 @@ public class LFunction {
     public LinkedHashSet<LIRBlock> blocks=new LinkedHashSet<>();
     public ArrayList<Reg> parameters=new ArrayList<>();
 
-    public int parametersOffset;
+    public int parametersOffset=0;
     public int regCnt;
 
     public String name;

@@ -30,8 +30,9 @@ public class Phi extends Inst{
     }
 
     @Override
-    public void remove() {
-        block.removeInst(this);
+    public void remove(boolean delete) {
+        if(delete)
+            block.removeInst(this);
         operands.forEach(operand -> {
             operand.removeUsedInst(this);
         });

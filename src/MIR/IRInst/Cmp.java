@@ -6,8 +6,9 @@ import MIR.IROperand.Register;
 
 public class Cmp extends Inst{
     @Override
-    public void remove() {
-        block.removeInst(this);
+    public void remove(boolean delete) {
+        if(delete)
+            block.removeInst(this);
         lhs.removeUsedInst(this);
         rhs.removeUsedInst(this);
     }

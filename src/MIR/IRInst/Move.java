@@ -15,8 +15,9 @@ public class Move extends Inst{
     }
 
     @Override
-    public void remove() {
-        block.removeInst(this);
+    public void remove(boolean delete) {
+        if(delete)
+            block.removeInst(this);
         oriOperand.removeUsedInst(this);
     }
 

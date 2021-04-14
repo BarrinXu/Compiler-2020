@@ -3,6 +3,8 @@ package assembly.RISCVInst;
 import assembly.LIRBlock;
 import assembly.LOperand.Reg;
 
+import java.util.HashSet;
+
 public class Sz extends BaseInst{
     public Reg rs1;
     public CmpOpType opCode;
@@ -27,5 +29,18 @@ public class Sz extends BaseInst{
     @Override
     public void addStackSize(int stackSize) {
 
+    }
+
+    @Override
+    public HashSet<Reg> usedRegSet() {
+        HashSet<Reg>tmp=new HashSet<>();
+        tmp.add(rs1);
+        return tmp;
+    }
+
+    @Override
+    public void replaceUse(Reg origin, Reg to) {
+        if(rs1==origin)
+            rs1=to;
     }
 }

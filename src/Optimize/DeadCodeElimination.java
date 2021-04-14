@@ -1,12 +1,13 @@
 package Optimize;
 
+import BackEnd.DomAnalysis;
 import MIR.IRInst.Phi;
 import MIR.Root;
 
-public class DCE {
+public class DeadCodeElimination {
     public Root IRRoot;
-    boolean success;
-    public DCE(Root IRRoot){
+    public boolean success;
+    public DeadCodeElimination(Root IRRoot){
         this.IRRoot=IRRoot;
     }
 
@@ -44,7 +45,7 @@ public class DCE {
                             nowReg= phiInst.getKey();
                             while(true){
                                 var nxt=nowReg.usedInsts.iterator().next().reg;
-                                nowReg.usedInsts.iterator().next().remove();
+                                nowReg.usedInsts.iterator().next().remove(true);
                                 nowReg=nxt;
                                 if(nowReg== phiInst.getKey())
                                     break;
@@ -53,9 +54,11 @@ public class DCE {
                         }
                     }
                 }
+                //new DomAnalysis(func).solve();
             }
             success|=changed;
         }
+        IRRoot.functions.forEach((name,func)->new DomAnalysis(func).solve());
     }
 
     public boolean solve(){

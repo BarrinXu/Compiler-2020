@@ -7,6 +7,8 @@ import assembly.LOperand.LGlobalReg;
 import assembly.LOperand.Reg;
 import assembly.LOperand.StackImm;
 
+import java.util.HashSet;
+
 import static java.lang.Math.abs;
 
 public class Ld extends BaseInst{
@@ -41,5 +43,19 @@ public class Ld extends BaseInst{
     public void addStackSize(int stackSize) {
         if(offset instanceof StackImm)
             offset=new Imm(stackSize+offset.val);
+    }
+
+    @Override
+    public HashSet<Reg> usedRegSet() {
+        HashSet<Reg>tmp=new HashSet<>();
+        if(!(address instanceof LGlobalReg))
+            tmp.add(address);
+        return tmp;
+    }
+
+    @Override
+    public void replaceUse(Reg origin, Reg to) {
+        if(address==origin)
+            address=to;
     }
 }

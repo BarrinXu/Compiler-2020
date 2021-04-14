@@ -14,8 +14,9 @@ public class Return extends Inst{
     }
 
     @Override
-    public void remove() {
-        block.deleteTerminate();
+    public void remove(boolean delete) {
+        if(delete)
+            block.deleteTerminate();
         if(val!=null)
             val.removeUsedInst(this);
     }

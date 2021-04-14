@@ -15,8 +15,9 @@ public class Malloc extends Inst{
     }
 
     @Override
-    public void remove() {
-        block.removeInst(this);
+    public void remove(boolean delete) {
+        if(delete)
+            block.removeInst(this);
         size.removeUsedInst(this);
     }
 
