@@ -62,7 +62,7 @@ public class Main {
                 new IRBuilder(gScope,IRRoot).visit(ASTRoot);
 
                 new MemToReg(IRRoot).solve();
-
+                doOptimize=true;
                 if(doOptimize)
                     new Optimizer(IRRoot).solve();
                 new SolvePhi(IRRoot).solve();
