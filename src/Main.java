@@ -29,11 +29,11 @@ public class Main {
             for(var arg:args){
                 switch (arg){
                     case "-semantic":codegen=false;break;
-                    case "-optimize":doOptimize=true;break;
+                    //case "-optimize":doOptimize=true;break;
                 }
             }
         }
-
+		
         String name = "test.mx";
         InputStream input = System.in;
         //InputStream input=new FileInputStream(name);
