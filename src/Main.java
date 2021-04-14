@@ -28,8 +28,8 @@ public class Main {
         if(args.length>0){
             for(var arg:args){
                 switch (arg){
-                    //case "-semantic":codegen=false;break;
-                    //case "-optimize":doOptimize=true;break;
+                    case "-semantic":codegen=false;break;
+                    case "-optimize":doOptimize=true;break;
                 }
             }
         }

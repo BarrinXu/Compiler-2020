@@ -120,6 +120,15 @@ public class IRBuilder implements ASTVisitor {
                 }
             }
         });
+        it.nodeList.forEach(node->{
+            if(node instanceof classNode){
+                nowClass= (classType) gScope.getTypeFromName(((classNode) node).name,node.pos);
+                ((classNode) node).members.forEach(member->{
+                    member.accept(this);
+                });
+                nowClass=null;
+            }
+        });
         it.nodeList.forEach(node->node.accept(this));
         IRRoot.getFunction("INIT").outBlock.setTerminate(new Return(IRRoot.getFunction("INIT").outBlock,null));
         nowFunction=IRRoot.getFunction("INIT");
@@ -720,8 +729,8 @@ public class IRBuilder implements ASTVisitor {
     public void visit(memberNode it) {
         it.call.accept(this);
         IRBaseOperand pointToClass=loadPointer(nowBlock,it.call.operand);
-        if(it.entity.operand==null)
-            throw new InternalException("error location: "+it.pos.toString());
+        //if(it.entity.operand==null)
+        //    throw new InternalException("error location: "+it.pos.toString());
         it.operand=new Register(it.entity.operand.type, "this."+it.member);
         nowBlock.pushInst(new GetElementPtr((Register) it.operand,nowBlock,((PointerType)pointToClass.type).dest,pointToClass,new ConstInt(0,32),it.entity.index));
         addBranch(it);
