@@ -13,6 +13,7 @@ import Util.classType;
 import Util.error.internalError;
 import Util.funcDecl;
 import Util.globalScope;
+import com.sun.jdi.InternalException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -539,7 +540,7 @@ public class IRBuilder implements ASTVisitor {
                     it.entity.operand=reg;
                 }
                 else{
-                    //???
+
                     if(type instanceof ClassType)
                         type=new PointerType(type,false);
                     it.entity.operand=new Register(new PointerType(type,true),it.name+"_address");
@@ -719,6 +720,8 @@ public class IRBuilder implements ASTVisitor {
     public void visit(memberNode it) {
         it.call.accept(this);
         IRBaseOperand pointToClass=loadPointer(nowBlock,it.call.operand);
+        if(it.entity.operand==null)
+            throw new InternalException("error location: "+it.pos.toString());
         it.operand=new Register(it.entity.operand.type, "this."+it.member);
         nowBlock.pushInst(new GetElementPtr((Register) it.operand,nowBlock,((PointerType)pointToClass.type).dest,pointToClass,new ConstInt(0,32),it.entity.index));
         addBranch(it);
