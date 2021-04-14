@@ -108,9 +108,9 @@ public class InstSelection {
             });
             LFunction Lfunc=new LFunction(name,blockMap.get(func.inBlock),blockMap.get(func.outBlock));
             funcMap.put(func,Lfunc);
-            /*func.parameters.forEach(parameter -> {
+            func.parameters.forEach(parameter -> {
                 Lfunc.parameters.add(MirToLir(parameter));
-            });*/
+            });
             LRoot.functions.add(Lfunc);
         });
         IRRoot.functions.forEach((name,func)->{
@@ -133,23 +133,23 @@ public class InstSelection {
         stackImm.reverse=true;
         inBlock.pushInst(new IType(LRoot.realRegs.get(2),inBlock,LRoot.realRegs.get(2),stackImm, BaseInst.CalOpType.add));
 
-        VirReg x1_backup =new VirReg(cnt++,4);
-        inBlock.pushInst(new Mv(x1_backup,inBlock,LRoot.realRegs.get(1)));
 
-        /*LRoot.calleeRegs.forEach(reg->{
+
+        LRoot.calleeRegs.forEach(reg->{
             VirReg tmp=new VirReg(cnt++,4);
             CalleeVirRegLists.add(tmp);
             inBlock.pushInst(new Mv(tmp,inBlock,reg));
-        });*/
+        });
 
-
+        VirReg x1_backup =new VirReg(cnt++,4);
+        inBlock.pushInst(new Mv(x1_backup,inBlock,LRoot.realRegs.get(1)));
 
         for(int i=0; i<min(8,func.parameters.size()); i++)
             inBlock.pushInst(new Mv(Lfunc.parameters.get(i),inBlock,LRoot.realRegs.get(10+i)));
 
         int offset =0;
         for(int i=8; i<func.parameters.size(); i++){
-            inBlock.pushInst(new Ld(Lfunc.parameters.get(i),inBlock,LRoot.realRegs.get(2),new StackImm(offset),func.parameters.get(i).type.size()));
+            inBlock.pushInst(new Ld(Lfunc.parameters.get(i),inBlock,LRoot.realRegs.get(2),new StackImm(offset),func.parameters.get(i).type.size()/8));
             offset +=4;//Why
         }
 
@@ -160,8 +160,8 @@ public class InstSelection {
             Lfunc.blocks.add(Lblock);
         });
 
-        //for(int i=0; i<LRoot.calleeRegs.size(); i++)
-        //   outBlock.pushInst(new Mv(LRoot.calleeRegs.get(i),outBlock,CalleeVirRegLists.get(i)));
+        for(int i=0; i<LRoot.calleeRegs.size(); i++)
+            outBlock.pushInst(new Mv(LRoot.calleeRegs.get(i),outBlock,CalleeVirRegLists.get(i)));
         outBlock.pushInst(new Mv(LRoot.realRegs.get(1),outBlock,x1_backup));
         outBlock.pushInst(new IType(LRoot.realRegs.get(2),outBlock,LRoot.realRegs.get(2),new StackImm(0), BaseInst.CalOpType.add));
         outBlock.pushInst(new Ret(outBlock,LRoot));

@@ -284,7 +284,7 @@ public class UltimateRegAlloc {
     public void decrementDegree(Reg x){
         x.deg--;
         if(x.deg==K-1){
-            var nodes=new HashSet<>(regLinkSet(x));
+            HashSet<Reg>nodes=new HashSet<>(regLinkSet(x));
             nodes.add(x);
             enableMoves(nodes);
             spillWorkList.remove(x);
@@ -317,7 +317,7 @@ public class UltimateRegAlloc {
     public boolean George(Reg u,Reg v){
         boolean tmp=true;
         for(var x:regLinkSet(v))
-            tmp&=x.deg<K||preColored.contains(x)||edgeSet.contains(new Edge(x,u));
+            tmp&=(x.deg<K||preColored.contains(x)||edgeSet.contains(new Edge(x,u)));
         return tmp;
     }
     public void combine(Reg u,Reg v){
@@ -332,7 +332,7 @@ public class UltimateRegAlloc {
         tmp.add(v);
         enableMoves(tmp);
         regLinkSet(v).forEach(x->{
-            addEdge(u,x);
+            addEdge(x,u);
             decrementDegree(x);//Maybe change!
         });
         if(u.deg>=K&&freezeWorkList.contains(u)){
@@ -365,7 +365,7 @@ public class UltimateRegAlloc {
             addWorkList(v);
         }
         else{
-            if((preColored.contains(u)&& George(u,v))||(!preColored.contains(u)&&Briggs(twoRegsLinkSet(u,v)))){
+            if((preColored.contains(u)&& George(u,v))||((!preColored.contains(u))&&Briggs(twoRegsLinkSet(u,v)))){
                 coalescedMoves.add(mv);
                 combine(u,v);
                 addWorkList(u);
