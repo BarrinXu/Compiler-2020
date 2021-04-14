@@ -35,10 +35,10 @@ public class Main {
         }
 
         String name = "test.mx";
-        //InputStream input = System.in;
-        InputStream input=new FileInputStream(name);
-        PrintStream stream=new PrintStream("D:\\Barrin\\Documents\\Virtual Machines\\Ubuntu 64 位\\share\\test.s");
-        //PrintStream stream=new PrintStream("output.s");
+        InputStream input = System.in;
+        //InputStream input=new FileInputStream(name);
+        //PrintStream stream=new PrintStream("D:\\Barrin\\Documents\\Virtual Machines\\Ubuntu 64 位\\share\\test.s");
+        PrintStream stream=new PrintStream("output.s");
         try {
             RootNode ASTRoot;
             globalScope gScope = new globalScope();
