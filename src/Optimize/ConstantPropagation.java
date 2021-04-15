@@ -51,21 +51,7 @@ public class ConstantPropagation {
         reachBlocks.add(func.inBlock);
         blockDFS(func.inBlock);
     }
-    public ArrayList<IRBlock>onlyJumpBlocks=new ArrayList<>();
-    public void compressDirectJumpBlock()
-    {
-        for(var block:onlyJumpBlocks){
-            if(block.head instanceof Jump && block.fas.size()==1) {
-                var faBlock=block.fas.get(0);
-                var nxtBlock=((Jump) block.head).destBlock;
-                faBlock.sons.removeIf(son->son==block);
-                faBlock.sons.add(nxtBlock);
-                faBlock.modifyBranchDest(block,nxtBlock);
-                nxtBlock.fas.removeIf(fa->fa==block);
-                nxtBlock.fas.add(faBlock);
-            }
-        }
-    }
+
     public void solveFunc(Function func){
         nowFunc=func;
         changed=true;
@@ -73,9 +59,7 @@ public class ConstantPropagation {
         while(changed){
             changed=false;
             visitBlocks.clear();
-            onlyJumpBlocks.clear();
             solveBlock(func.inBlock);
-            compressDirectJumpBlock();
             reachAnalysis(func);
             func.blocks.forEach(block -> {
                 if(!reachBlocks.contains(block)){
@@ -110,9 +94,6 @@ public class ConstantPropagation {
                 changed=true;
                 inst.remove(true);
             }
-        }
-        if(block.head instanceof Jump&&block.fas.size()==1){
-            onlyJumpBlocks.add(block);
         }
         for(var son:block.sons){
             if(!visitBlocks.contains(son))

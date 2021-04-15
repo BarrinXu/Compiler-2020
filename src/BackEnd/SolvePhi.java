@@ -7,6 +7,7 @@ import MIR.IRInst.Move;
 import MIR.IROperand.Register;
 import MIR.Root;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -60,6 +61,17 @@ public class SolvePhi {
         blockMap.forEach(this::solveBlock);
         //may be done
 
+        ArrayList<IRBlock>onlyJumpBlocks=new ArrayList<>();
+        func.blocks.forEach(block -> {
+            if(block!=func.inBlock&&block.head instanceof Jump)
+                onlyJumpBlocks.add(block);
+        });
+        onlyJumpBlocks.forEach(block -> {
+            var destBlock=((Jump)block.head).destBlock;
+            destBlock.fas.remove(block);
+            block.fas.forEach(fa->fa.modifyBranchDestOfDirectJumpCompress(block,destBlock));
+        });
+        func.blocks.removeAll(onlyJumpBlocks);
     }
     public void solveBlock(IRBlock block,parallelCopy copy){
         boolean done=false;

@@ -133,17 +133,29 @@ public class IRBlock {
     public boolean terminateWithReturn(){
         return terminate && tail instanceof Return;
     }
-    public void modifyBranchDest(IRBlock ori, IRBlock to){
+    public void modifyBranchDestOfDirectJumpCompress(IRBlock ori, IRBlock to){
         if(tail instanceof Jump){
-            if(((Jump) tail).destBlock==ori)
+            if(((Jump) tail).destBlock==ori){
                 ((Jump) tail).destBlock=to;
+                sons.remove(ori);
+                sons.add(to);
+                to.fas.add(this);
+            }
         }
         else if(tail instanceof Branch)
         {
-            if(((Branch) tail).thenDestBlock==ori)
+            if(((Branch) tail).thenDestBlock==ori){
                 ((Branch) tail).thenDestBlock=to;
-            if(((Branch) tail).elseDestBlock==ori)
+                sons.remove(ori);
+                sons.add(to);
+                to.fas.add(this);
+            }
+            if(((Branch) tail).elseDestBlock==ori){
                 ((Branch) tail).elseDestBlock=to;
+                sons.remove(ori);
+                sons.add(to);
+                to.fas.add(this);
+            }
         }
     }
 }
