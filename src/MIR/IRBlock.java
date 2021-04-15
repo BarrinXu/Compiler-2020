@@ -133,5 +133,17 @@ public class IRBlock {
     public boolean terminateWithReturn(){
         return terminate && tail instanceof Return;
     }
-
+    public void modifyBranchDest(IRBlock ori, IRBlock to){
+        if(tail instanceof Jump){
+            if(((Jump) tail).destBlock==ori)
+                ((Jump) tail).destBlock=to;
+        }
+        else if(tail instanceof Branch)
+        {
+            if(((Branch) tail).thenDestBlock==ori)
+                ((Branch) tail).thenDestBlock=to;
+            if(((Branch) tail).elseDestBlock==ori)
+                ((Branch) tail).elseDestBlock=to;
+        }
+    }
 }

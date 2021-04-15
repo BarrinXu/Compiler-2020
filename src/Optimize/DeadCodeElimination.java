@@ -45,12 +45,17 @@ public class DeadCodeElimination {
                             nowReg= phiInst.getKey();
                             while(true){
                                 var nxt=nowReg.usedInsts.iterator().next().reg;
-                                nowReg.usedInsts.iterator().next().remove(true);
+                                if(nowReg.usedInsts.iterator().next() instanceof Phi){
+                                    nowReg.usedInsts.iterator().next().remove(false);
+                                    //iter.remove();
+                                }
+                                else
+                                    nowReg.usedInsts.iterator().next().remove(true);
                                 nowReg=nxt;
                                 if(nowReg== phiInst.getKey())
                                     break;
                             }
-                            //iter.remove();
+                            iter.remove();
                         }
                     }
                 }

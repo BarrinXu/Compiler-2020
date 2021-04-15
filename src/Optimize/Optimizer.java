@@ -12,6 +12,7 @@ public class Optimizer {
         boolean changed=true;
         while(changed){
             changed=new DeadCodeElimination(IRRoot).solve();
+            changed|=new ConstantPropagation(IRRoot).solve();
         }
     }
 
