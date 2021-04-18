@@ -201,7 +201,7 @@ public class InstSelection {
                 case sub -> opCode= BaseInst.CalOpType.sub;
                 case add -> opCode= BaseInst.CalOpType.add;
             }
-            if(opCode==BaseInst.CalOpType.mul||opCode==BaseInst.CalOpType.div||opCode==BaseInst.CalOpType.rem)
+            /*if(opCode==BaseInst.CalOpType.mul||opCode==BaseInst.CalOpType.div||opCode==BaseInst.CalOpType.rem)
             {
                 block.pushInst(new RType(MirToLir(inst.reg),block,MirToLir(((Binary) inst).lhs),MirToLir(((Binary) inst).rhs),opCode));
                 return;
@@ -218,7 +218,7 @@ public class InstSelection {
                         block.pushInst(new IType(MirToLir(inst.reg),block,MirToLir(((Binary) inst).lhs),new Imm(-1*((ConstInt)((Binary) inst).rhs).val), BaseInst.CalOpType.add));
                     return;
                 }
-            }
+            }*/
             block.pushInst(new RType(MirToLir(inst.reg),block,MirToLir(((Binary) inst).lhs),MirToLir(((Binary) inst).rhs),opCode));
         }
         else if(inst instanceof BitCast){
