@@ -2,6 +2,7 @@ package MIR.IROperand;
 
 import MIR.IRInst.Inst;
 import MIR.IRType.IRBaseType;
+import com.sun.jdi.InternalException;
 
 import java.util.HashSet;
 
@@ -26,5 +27,10 @@ public class GlobalRegister extends IRBaseOperand{
     @Override
     public String getIdentity() {
         return "@"+name;
+    }
+
+    @Override
+    public IRBaseOperand copy() {
+        throw new InternalException();
     }
 }

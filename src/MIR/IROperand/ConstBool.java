@@ -26,4 +26,9 @@ public class ConstBool extends IRBaseOperand{
     public String getIdentity() {
         return val?"1":"0";
     }
+
+    @Override
+    public IRBaseOperand copy() {
+        return new ConstBool(val);
+    }
 }

@@ -2,6 +2,7 @@ package MIR;
 
 import MIR.IRInst.*;
 import MIR.IROperand.Register;
+import com.sun.jdi.InternalException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -156,6 +157,66 @@ public class IRBlock {
                 sons.add(to);
                 to.fas.add(this);
             }
+        }
+    }
+    public void modifyPhi(IRBlock ori, IRBlock to){
+        phiInstMap.forEach((register, phiInst) -> {
+            int size=phiInst.blocks.size();
+            for(int i=0; i<size; i++)
+                if(phiInst.blocks.get(i)==ori)
+                    phiInst.blocks.set(i,to);
+        });
+    }
+    public void split(IRBlock latterBlock,Inst inst){
+        sons.forEach(son->{
+            son.modifyPhi(this,latterBlock);
+            son.fas.remove(this);
+            son.fas.add(latterBlock);
+        });
+        latterBlock.sons.addAll(sons);
+        sons.clear();
+
+        inst.nxt.lst=null;
+        latterBlock.head=inst.nxt;
+        latterBlock.tail=tail;
+        tail=inst.lst;
+        for(var instLatter=inst.nxt; instLatter!=null; instLatter=instLatter.nxt)
+            instLatter.block=latterBlock;
+        terminate=false;
+        latterBlock.terminate=true;
+        if(tail!=null)
+            tail.nxt=null;
+        if(head==inst)
+            head=null;
+    }
+    public void mergeBlock(IRBlock rhs){
+        if(rhs.fas.size()!=0)
+            throw new InternalException();
+        sons.addAll(rhs.sons);
+        rhs.sons.forEach(son->{
+            if(son.fas.contains(rhs)){
+                son.fas.remove(rhs);
+                son.fas.add(this);
+                son.modifyPhi(rhs,this);
+            }
+        });
+        rhs.phiInstMap.forEach(((register, phiInst) -> phiInst.block=this));
+        for(var inst=rhs.head; inst!=null; inst=inst.nxt)
+            inst.block=this;
+        if(tail!=null)
+            tail.nxt=rhs.head;
+        if(rhs.head!=null)
+            rhs.head.lst=tail;
+        if(head==null)
+            head=rhs.head;
+        tail=rhs.tail;
+        terminate= rhs.terminate;
+    }
+    public void modifyFa(IRBlock ori, IRBlock to){
+        if(fas.contains(ori)){
+            fas.remove(ori);
+            fas.add(to);
+            modifyPhi(ori,to);
         }
     }
 }

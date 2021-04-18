@@ -1,8 +1,11 @@
 package MIR.IRInst;
 
 import MIR.IRBlock;
+import MIR.IROperand.GlobalRegister;
 import MIR.IROperand.IRBaseOperand;
 import MIR.IROperand.Register;
+
+import java.util.HashMap;
 
 abstract public class Inst {
 
@@ -26,8 +29,19 @@ abstract public class Inst {
             block.head = nxt;
     }
 
-    abstract public void remove(boolean delete);
+    public abstract void remove(boolean delete);
 
-    abstract public void modifyReg(Register oriReg, IRBaseOperand to);
+    public abstract void modifyReg(Register oriReg, IRBaseOperand to);
 
+    public IRBaseOperand getMirOperand(IRBaseOperand ori, HashMap<IRBaseOperand,IRBaseOperand>mirOperands){
+        if(ori instanceof GlobalRegister)
+            return ori;
+        else if(!mirOperands.containsKey(ori)){
+            mirOperands.put(ori,ori.copy());
+            return mirOperands.get(ori);
+        }
+        else
+            return mirOperands.get(ori);
+    }
+    public abstract void addMirInst(IRBlock newBlock,HashMap<IRBaseOperand,IRBaseOperand>mirOperands,HashMap<IRBlock,IRBlock>mirBlocks);
 }

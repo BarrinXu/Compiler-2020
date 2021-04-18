@@ -4,6 +4,8 @@ import MIR.IRBlock;
 import MIR.IROperand.IRBaseOperand;
 import MIR.IROperand.Register;
 
+import java.util.HashMap;
+
 public class Branch extends Inst{
     public IRBaseOperand condition;
     public IRBlock thenDestBlock,elseDestBlock;
@@ -28,5 +30,10 @@ public class Branch extends Inst{
     public void modifyReg(Register oriReg, IRBaseOperand to) {
         if(condition==oriReg)
             condition=to;
+    }
+
+    @Override
+    public void addMirInst(IRBlock newBlock, HashMap<IRBaseOperand, IRBaseOperand> mirOperands, HashMap<IRBlock, IRBlock> mirBlocks) {
+        newBlock.setTerminate(new Branch(newBlock,getMirOperand(condition,mirOperands),mirBlocks.get(thenDestBlock),mirBlocks.get(elseDestBlock)));
     }
 }

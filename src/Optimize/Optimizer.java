@@ -17,6 +17,9 @@ public class Optimizer {
     }
 
     public void solve(){
+        new FunctionInline(IRRoot,false).solve();
+        analysis();
+        new FunctionInline(IRRoot,true).solve();
         analysis();
     }
 }

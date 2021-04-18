@@ -4,6 +4,8 @@ import MIR.IRBlock;
 import MIR.IROperand.IRBaseOperand;
 import MIR.IROperand.Register;
 
+import java.util.HashMap;
+
 public class BitCast extends Inst{
     public IRBaseOperand it;
 
@@ -26,5 +28,10 @@ public class BitCast extends Inst{
     public void modifyReg(Register oriReg, IRBaseOperand to) {
         if(it==oriReg)
             it=to;
+    }
+
+    @Override
+    public void addMirInst(IRBlock newBlock, HashMap<IRBaseOperand, IRBaseOperand> mirOperands, HashMap<IRBlock, IRBlock> mirBlocks) {
+        newBlock.pushInst(new BitCast((Register) getMirOperand(reg,mirOperands),newBlock,getMirOperand(it,mirOperands)));
     }
 }

@@ -176,7 +176,15 @@ public class InstSelection {
             blockMap.get(son).fas.add(LBlock);
         });
     }
-
+    public boolean inLimit(int val){
+        return (val<(1<<11))&&(val>(-1*(1<<11)));//maybe can to -2048?
+    }
+    public boolean judgeImm(IRBaseOperand operand){
+        return operand instanceof ConstInt&&inLimit(((ConstInt) operand).val);
+    }
+    public boolean canReverse(BaseInst.CalOpType opCode){
+        return opCode== BaseInst.CalOpType.add||opCode== BaseInst.CalOpType.mul||opCode== BaseInst.CalOpType.and||opCode== BaseInst.CalOpType.or||opCode== BaseInst.CalOpType.xor;
+    }
     public void solveInst(Inst inst){
         LIRBlock block=nowLBlock;
         if(inst instanceof Binary){
@@ -192,6 +200,24 @@ public class InstSelection {
                 case or -> opCode= BaseInst.CalOpType.or;
                 case sub -> opCode= BaseInst.CalOpType.sub;
                 case add -> opCode= BaseInst.CalOpType.add;
+            }
+            if(opCode==BaseInst.CalOpType.mul||opCode==BaseInst.CalOpType.div||opCode==BaseInst.CalOpType.rem)
+            {
+                block.pushInst(new RType(MirToLir(inst.reg),block,MirToLir(((Binary) inst).lhs),MirToLir(((Binary) inst).rhs),opCode));
+                return;
+            }
+            else{
+                if(canReverse(opCode)&&judgeImm(((Binary) inst).lhs)){
+                    block.pushInst(new IType(MirToLir(inst.reg),block,MirToLir(((Binary) inst).rhs),new Imm(((ConstInt)((Binary) inst).lhs).val),opCode));
+                    return;
+                }
+                if(judgeImm(((Binary) inst).rhs)){
+                    if(opCode!= BaseInst.CalOpType.sub)
+                        block.pushInst(new IType(MirToLir(inst.reg),block,MirToLir(((Binary) inst).lhs),new Imm(((ConstInt)((Binary) inst).rhs).val),opCode));
+                    else
+                        block.pushInst(new IType(MirToLir(inst.reg),block,MirToLir(((Binary) inst).lhs),new Imm(-1*((ConstInt)((Binary) inst).rhs).val), BaseInst.CalOpType.add));
+                    return;
+                }
             }
             block.pushInst(new RType(MirToLir(inst.reg),block,MirToLir(((Binary) inst).lhs),MirToLir(((Binary) inst).rhs),opCode));
         }

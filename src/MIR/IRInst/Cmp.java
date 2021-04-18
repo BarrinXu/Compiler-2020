@@ -4,6 +4,8 @@ import MIR.IRBlock;
 import MIR.IROperand.IRBaseOperand;
 import MIR.IROperand.Register;
 
+import java.util.HashMap;
+
 public class Cmp extends Inst{
     @Override
     public void remove(boolean delete) {
@@ -19,6 +21,11 @@ public class Cmp extends Inst{
             lhs=to;
         if(rhs==oriReg)
             rhs=to;
+    }
+
+    @Override
+    public void addMirInst(IRBlock newBlock, HashMap<IRBaseOperand, IRBaseOperand> mirOperands, HashMap<IRBlock, IRBlock> mirBlocks) {
+        newBlock.pushInst(new Cmp((Register) getMirOperand(reg,mirOperands),newBlock,opCode,getMirOperand(lhs,mirOperands),getMirOperand(rhs,mirOperands)));
     }
 
     public enum CmpOpType{

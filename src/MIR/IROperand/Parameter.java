@@ -28,4 +28,9 @@ public class Parameter extends IRBaseOperand{
     public String getIdentity() {
         return "%"+name;
     }
+
+    @Override
+    public IRBaseOperand copy() {
+        return new Parameter(type,name);
+    }
 }

@@ -4,6 +4,8 @@ import MIR.IRBlock;
 import MIR.IROperand.IRBaseOperand;
 import MIR.IROperand.Register;
 
+import java.util.HashMap;
+
 public class Store extends Inst{
     public IRBaseOperand val, address;
 
@@ -29,5 +31,10 @@ public class Store extends Inst{
             val=to;
         if(address==oriReg)
             address=to;
+    }
+
+    @Override
+    public void addMirInst(IRBlock newBlock, HashMap<IRBaseOperand, IRBaseOperand> mirOperands, HashMap<IRBlock, IRBlock> mirBlocks) {
+        newBlock.pushInst(new Store(getMirOperand(address,mirOperands),getMirOperand(val,mirOperands),newBlock));
     }
 }

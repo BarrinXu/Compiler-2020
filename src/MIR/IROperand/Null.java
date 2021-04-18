@@ -24,4 +24,9 @@ public class Null extends IRBaseOperand{
     public String getIdentity() {
         return "NULL";
     }
+
+    @Override
+    public IRBaseOperand copy() {
+        return new Null();
+    }
 }

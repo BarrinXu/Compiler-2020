@@ -41,4 +41,9 @@ public class ConstString extends IRBaseOperand{
     public String getIdentity() {
         return "@"+name;
     }
+
+    @Override
+    public IRBaseOperand copy() {
+        return this;
+    }
 }

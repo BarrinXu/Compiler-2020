@@ -26,4 +26,9 @@ public class ConstInt extends IRBaseOperand{
     public String getIdentity() {
         return val+"";
     }
+
+    @Override
+    public IRBaseOperand copy() {
+        return new ConstInt(val, type.size());
+    }
 }

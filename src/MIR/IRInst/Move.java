@@ -3,6 +3,9 @@ package MIR.IRInst;
 import MIR.IRBlock;
 import MIR.IROperand.IRBaseOperand;
 import MIR.IROperand.Register;
+import com.sun.jdi.InternalException;
+
+import java.util.HashMap;
 
 public class Move extends Inst{
     public IRBaseOperand oriOperand;
@@ -24,5 +27,10 @@ public class Move extends Inst{
     public void modifyReg(Register oriReg, IRBaseOperand to){
         if(oriOperand==oriReg)
             oriOperand=to;
+    }
+
+    @Override
+    public void addMirInst(IRBlock newBlock, HashMap<IRBaseOperand, IRBaseOperand> mirOperands, HashMap<IRBlock, IRBlock> mirBlocks) {
+        throw new InternalException();
     }
 }

@@ -4,6 +4,8 @@ import MIR.IRBlock;
 import MIR.IROperand.IRBaseOperand;
 import MIR.IROperand.Register;
 
+import java.util.HashMap;
+
 public class Load extends Inst{
     public IRBaseOperand address;
     public Load(Register reg,IRBaseOperand address,IRBlock block) {
@@ -24,5 +26,10 @@ public class Load extends Inst{
     public void modifyReg(Register oriReg, IRBaseOperand to) {
         if(address==oriReg)
             address=to;
+    }
+
+    @Override
+    public void addMirInst(IRBlock newBlock, HashMap<IRBaseOperand, IRBaseOperand> mirOperands, HashMap<IRBlock, IRBlock> mirBlocks) {
+        newBlock.pushInst(new Load((Register) getMirOperand(reg,mirOperands),getMirOperand(address,mirOperands),newBlock));
     }
 }

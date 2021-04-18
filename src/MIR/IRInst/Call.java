@@ -6,6 +6,7 @@ import MIR.IROperand.IRBaseOperand;
 import MIR.IROperand.Register;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Call extends Inst{
     public Function func;
@@ -34,5 +35,14 @@ public class Call extends Inst{
         for(int i=0; i<size; i++)
             if(parameters.get(i)==oriReg)
                 parameters.set(i,to);
+    }
+
+    @Override
+    public void addMirInst(IRBlock newBlock, HashMap<IRBaseOperand, IRBaseOperand> mirOperands, HashMap<IRBlock, IRBlock> mirBlocks) {
+        ArrayList<IRBaseOperand>mirParameters=new ArrayList<>();
+        parameters.forEach(parameter->{
+            mirParameters.add(getMirOperand(parameter,mirOperands));
+        });
+        newBlock.pushInst(new Call(func,mirParameters,reg==null?null: (Register) getMirOperand(reg,mirOperands),newBlock));
     }
 }

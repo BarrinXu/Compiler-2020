@@ -12,5 +12,5 @@ abstract public class IRBaseOperand {
     public abstract void addUsedInst(Inst inst);
     public abstract void removeUsedInst(Inst inst);
     public abstract String getIdentity();
-
+    public abstract IRBaseOperand copy();
 }

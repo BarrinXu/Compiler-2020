@@ -61,6 +61,7 @@ public class SolvePhi {
         blockMap.forEach(this::solveBlock);
         //may be done
 
+        //compress direct jump
         ArrayList<IRBlock>onlyJumpBlocks=new ArrayList<>();
         func.blocks.forEach(block -> {
             if(block!=func.inBlock&&block.head instanceof Jump)

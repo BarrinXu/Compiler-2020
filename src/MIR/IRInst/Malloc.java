@@ -4,6 +4,8 @@ import MIR.IRBlock;
 import MIR.IROperand.IRBaseOperand;
 import MIR.IROperand.Register;
 
+import java.util.HashMap;
+
 public class Malloc extends Inst{
     public IRBaseOperand size;
 
@@ -25,5 +27,10 @@ public class Malloc extends Inst{
     public void modifyReg(Register oriReg, IRBaseOperand to) {
         if(size==oriReg)
             size=to;
+    }
+
+    @Override
+    public void addMirInst(IRBlock newBlock, HashMap<IRBaseOperand, IRBaseOperand> mirOperands, HashMap<IRBlock, IRBlock> mirBlocks) {
+        newBlock.pushInst(new Malloc((Register) getMirOperand(reg,mirOperands),newBlock,getMirOperand(size,mirOperands)));
     }
 }
