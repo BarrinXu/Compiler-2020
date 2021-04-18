@@ -24,9 +24,10 @@ public class IType extends BaseInst{
     @Override
     public String toString(){
         if(abs(imm.val)>imm.limit){
-            assert opCode==CalOpType.add;
+            throw new InternalError("ErrorImmRange!");
+            /*assert opCode==CalOpType.add;
             String tmp=imm.workOverLimit(dest,rs1).toString();
-            return tmp+"\t"+opCode+"i "+dest+", "+dest+", "+imm.val;
+            return tmp+"\t"+opCode+"i "+dest+", "+dest+", "+imm.val;*/
         }
         return opCode+"i "+dest+", "+rs1+", "+imm.val;
     }

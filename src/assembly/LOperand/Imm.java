@@ -8,7 +8,7 @@ import static java.lang.Math.abs;
 
 public class Imm extends LOperand{
     public int val;
-    public int limit=1023;
+    public int limit=2048;
     public Imm(int val){
         this.val=val;
     }

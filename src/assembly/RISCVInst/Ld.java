@@ -33,8 +33,9 @@ public class Ld extends BaseInst{
         else
             dataType="h";
         if((!(address instanceof LGlobalReg))&&abs(offset.val)>offset.limit){
-            String tmp=offset.workOverLimit(dest,address).toString();
-            return tmp+"\t"+"l"+dataType+" "+dest+", "+offset+"("+dest+")";
+            throw new InternalError("ErrorImmRange!");
+            /*String tmp=offset.workOverLimit(dest,address).toString();
+            return tmp+"\t"+"l"+dataType+" "+dest+", "+offset+"("+dest+")";*/
         }
         return "l"+dataType+" "+dest+", "+((address instanceof LGlobalReg)?address:offset+"("+address+")");
     }

@@ -139,9 +139,6 @@ public class FunctionInline {
         }
     }
     public void inlineOperate(Call inst,Function func){
-        inlineCnt++;
-        if(inlineCnt>inlineTimesLimit)
-            return;
         HashMap<IRBaseOperand,IRBaseOperand>mirOperands=new HashMap<>();
         HashMap<IRBlock,IRBlock>mirBlocks=new HashMap<>();
         var nowBlock=inst.block;
