@@ -17,7 +17,8 @@ public class FunctionInline {
     public boolean success=false, found=false;
     public boolean force;
     public int forceLimit=150;
-
+    public int inlineCnt=0;
+    public int inlineTimesLimit=100;
     public HashSet<Function>visit=new HashSet<>();
     public HashMap<Call,Function>canInline=new HashMap<>();
     public HashSet<Function>ignoreFunc=new HashSet<>();
@@ -138,6 +139,9 @@ public class FunctionInline {
         }
     }
     public void inlineOperate(Call inst,Function func){
+        inlineCnt++;
+        if(inlineCnt>inlineTimesLimit)
+            return;
         HashMap<IRBaseOperand,IRBaseOperand>mirOperands=new HashMap<>();
         HashMap<IRBlock,IRBlock>mirBlocks=new HashMap<>();
         var nowBlock=inst.block;
