@@ -3,11 +3,10 @@ package Optimize;
 import BackEnd.DomAnalysis;
 import MIR.Function;
 import MIR.IRBlock;
-import MIR.IRInst.Binary;
-import MIR.IRInst.Branch;
-import MIR.IRInst.Cmp;
-import MIR.IRInst.Jump;
+import MIR.IRInst.*;
 import MIR.IROperand.*;
+import MIR.IRType.BoolType;
+import MIR.IRType.IntType;
 import MIR.Root;
 import com.sun.jdi.InternalException;
 
@@ -75,6 +74,19 @@ public class ConstantPropagation {
     }
     public void solveBlock(IRBlock block){
         visitBlocks.add(block);
+        for(var iter=block.phiInstMap.entrySet().iterator(); iter.hasNext();){
+            var phiInst=iter.next().getValue();
+            if(phiInst.operands.size()==1){
+                var tryTrans=transToConst(phiInst.operands.get(0));
+                if(tryTrans!=null)
+                    phiInst.reg.replaceUse(tryTrans);
+                else
+                    phiInst.reg.replaceUse(phiInst.operands.get(0));
+                iter.remove();
+                phiInst.remove(false);
+                changed=true;
+            }
+        }
         //To be done
         for(var inst=block.head; inst!=null; inst=inst.nxt){
             //To be done
@@ -90,7 +102,7 @@ public class ConstantPropagation {
                         block.setTerminate(new Jump(block,((Branch) inst).elseDestBlock));
                 }
             }
-            else if((inst instanceof Binary&&binaryCheckAndReset((Binary) inst))||(inst instanceof Cmp&&cmpCheckAndReset((Cmp) inst))){
+            else if((inst instanceof Binary&&binaryCheckAndReset((Binary) inst))||(inst instanceof Cmp&&cmpCheckAndReset((Cmp) inst))||(inst instanceof Zext&&zextCheckAndSet((Zext) inst))){
                 changed=true;
                 inst.remove(true);
             }
@@ -188,5 +200,21 @@ public class ConstantPropagation {
         }
         else
             return false;
+    }
+    public boolean zextCheckAndSet(Zext inst){
+        int val;
+        if(inst.origin instanceof ConstBool)
+            val=((ConstBool) inst.origin).val?1:0;
+        else if(inst.origin instanceof ConstInt)
+            val=((ConstInt) inst.origin).val;
+        else
+            return false;
+        if(inst.reg.type instanceof IntType)
+            inst.reg.replaceUse(new ConstInt(val, inst.reg.type.size()));
+        else if(inst.reg.type instanceof BoolType)
+            inst.reg.replaceUse(new ConstBool(val!=0));
+        else
+            throw new InternalException();
+        return true;
     }
 }

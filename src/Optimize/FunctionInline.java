@@ -64,7 +64,7 @@ public class FunctionInline {
             forceInlineCollect();
             canInline.forEach(this::inlineOperate);
             updDom();
-            return true;
+            return !canInline.isEmpty();
         }
         else{
             success=false;
