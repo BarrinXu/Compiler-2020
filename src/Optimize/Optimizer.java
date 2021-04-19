@@ -11,8 +11,8 @@ public class Optimizer {
     public void analysis(){
         boolean changed=true;
         while(changed){
-            changed|=new SpecialForInlineAdv(IRRoot).solve();
-            changed=new DeadCodeElimination(IRRoot).solve();
+            changed=new SpecialForInlineAdv(IRRoot).solve();
+            changed|=new DeadCodeElimination(IRRoot).solve();
             changed|=new ConstantPropagation(IRRoot).solve();
 
         }
