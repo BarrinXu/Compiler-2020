@@ -5,6 +5,7 @@ import MIR.IROperand.IRBaseOperand;
 import MIR.IROperand.Register;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Return extends Inst{
     public IRBaseOperand val;
@@ -32,5 +33,13 @@ public class Return extends Inst{
     @Override
     public void addMirInst(IRBlock newBlock, HashMap<IRBaseOperand, IRBaseOperand> mirOperands, HashMap<IRBlock, IRBlock> mirBlocks) {
         newBlock.setTerminate(new Return(newBlock,val==null?null:getMirOperand(val,mirOperands)));
+    }
+
+    @Override
+    public HashSet<IRBaseOperand> usedOperandSet() {
+        HashSet<IRBaseOperand>tmp=new HashSet<>();
+        if(val!=null)
+            tmp.add(val);
+        return tmp;
     }
 }

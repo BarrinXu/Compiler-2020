@@ -5,6 +5,7 @@ import MIR.IROperand.IRBaseOperand;
 import MIR.IROperand.Register;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Jump extends Inst{
     public IRBlock destBlock;
@@ -27,5 +28,10 @@ public class Jump extends Inst{
     @Override
     public void addMirInst(IRBlock newBlock, HashMap<IRBaseOperand, IRBaseOperand> mirOperands, HashMap<IRBlock, IRBlock> mirBlocks) {
         newBlock.setTerminate(new Jump(newBlock,mirBlocks.get(destBlock)));
+    }
+
+    @Override
+    public HashSet<IRBaseOperand> usedOperandSet() {
+        return new HashSet<>();
     }
 }

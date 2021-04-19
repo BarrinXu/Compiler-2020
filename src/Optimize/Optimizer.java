@@ -15,7 +15,7 @@ public class Optimizer {
             changed=new DeadCodeElimination(IRRoot).solve();
             changed|=new ConstantPropagation(IRRoot).solve();
             new SpecialForInlineAdv(IRRoot).solve();
-
+            changed|=new LoopInvariantCodeMotion(IRRoot).solve();
         }
     }
 

@@ -6,6 +6,7 @@ import MIR.IROperand.Register;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Phi extends Inst{
     public ArrayList<IRBlock> blocks;
@@ -58,5 +59,16 @@ public class Phi extends Inst{
             mirRelateBlocks.add(mirBlocks.get(oriBlock));
         });
         newBlock.add_PhiInst(new Phi((Register) getMirOperand(reg,mirOperands),newBlock,mirRelateBlocks,mirValues));
+    }
+
+    @Override
+    public HashSet<IRBaseOperand> usedOperandSet() {
+        return new HashSet<>(operands);
+    }
+
+    public void addOrigin(IRBaseOperand operand,IRBlock origin){
+        operands.add(operand);
+        blocks.add(origin);
+        operand.addUsedInst(this);
     }
 }

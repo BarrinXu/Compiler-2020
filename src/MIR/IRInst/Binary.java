@@ -5,6 +5,7 @@ import MIR.IROperand.IRBaseOperand;
 import MIR.IROperand.Register;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Binary extends Inst{
     public enum BinaryOpType{
@@ -40,5 +41,13 @@ public class Binary extends Inst{
     @Override
     public void addMirInst(IRBlock newBlock, HashMap<IRBaseOperand, IRBaseOperand> mirOperands, HashMap<IRBlock, IRBlock> mirBlocks) {
         newBlock.pushInst(new Binary((Register) getMirOperand(reg,mirOperands),newBlock,opCode,getMirOperand(lhs,mirOperands),getMirOperand(rhs,mirOperands)));
+    }
+
+    @Override
+    public HashSet<IRBaseOperand> usedOperandSet() {
+        HashSet<IRBaseOperand>tmp=new HashSet<>();
+        tmp.add(lhs);
+        tmp.add(rhs);
+        return tmp;
     }
 }

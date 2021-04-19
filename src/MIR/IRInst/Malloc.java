@@ -5,6 +5,7 @@ import MIR.IROperand.IRBaseOperand;
 import MIR.IROperand.Register;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Malloc extends Inst{
     public IRBaseOperand size;
@@ -32,5 +33,12 @@ public class Malloc extends Inst{
     @Override
     public void addMirInst(IRBlock newBlock, HashMap<IRBaseOperand, IRBaseOperand> mirOperands, HashMap<IRBlock, IRBlock> mirBlocks) {
         newBlock.pushInst(new Malloc((Register) getMirOperand(reg,mirOperands),newBlock,getMirOperand(size,mirOperands)));
+    }
+
+    @Override
+    public HashSet<IRBaseOperand> usedOperandSet() {
+        HashSet<IRBaseOperand>tmp=new HashSet<>();
+        tmp.add(size);
+        return tmp;
     }
 }

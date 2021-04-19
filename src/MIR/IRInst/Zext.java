@@ -5,6 +5,7 @@ import MIR.IROperand.IRBaseOperand;
 import MIR.IROperand.Register;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Zext extends Inst{
     public IRBaseOperand origin;
@@ -32,5 +33,12 @@ public class Zext extends Inst{
     @Override
     public void addMirInst(IRBlock newBlock, HashMap<IRBaseOperand, IRBaseOperand> mirOperands, HashMap<IRBlock, IRBlock> mirBlocks) {
         newBlock.pushInst(new Zext((Register) getMirOperand(reg,mirOperands),newBlock,getMirOperand(origin,mirOperands)));
+    }
+
+    @Override
+    public HashSet<IRBaseOperand> usedOperandSet() {
+        HashSet<IRBaseOperand>tmp=new HashSet<>();
+        tmp.add(origin);
+        return tmp;
     }
 }

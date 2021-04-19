@@ -7,6 +7,7 @@ import MIR.IROperand.Register;
 import MIR.IRType.IRBaseType;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class GetElementPtr extends Inst{
     public IRBaseType type;
@@ -46,5 +47,13 @@ public class GetElementPtr extends Inst{
     @Override
     public void addMirInst(IRBlock newBlock, HashMap<IRBaseOperand, IRBaseOperand> mirOperands, HashMap<IRBlock, IRBlock> mirBlocks) {
         newBlock.pushInst(new GetElementPtr((Register) getMirOperand(reg,mirOperands),newBlock,type,getMirOperand(pointer,mirOperands),getMirOperand(arrayOffset,mirOperands),elementOffset));
+    }
+
+    @Override
+    public HashSet<IRBaseOperand> usedOperandSet() {
+        HashSet<IRBaseOperand>tmp=new HashSet<>();
+        tmp.add(pointer);
+        tmp.add(arrayOffset);
+        return tmp;
     }
 }

@@ -5,6 +5,7 @@ import MIR.IROperand.IRBaseOperand;
 import MIR.IROperand.Register;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Branch extends Inst{
     public IRBaseOperand condition;
@@ -35,5 +36,12 @@ public class Branch extends Inst{
     @Override
     public void addMirInst(IRBlock newBlock, HashMap<IRBaseOperand, IRBaseOperand> mirOperands, HashMap<IRBlock, IRBlock> mirBlocks) {
         newBlock.setTerminate(new Branch(newBlock,getMirOperand(condition,mirOperands),mirBlocks.get(thenDestBlock),mirBlocks.get(elseDestBlock)));
+    }
+
+    @Override
+    public HashSet<IRBaseOperand> usedOperandSet() {
+        HashSet<IRBaseOperand>tmp=new HashSet<>();
+        tmp.add(condition);
+        return tmp;
     }
 }

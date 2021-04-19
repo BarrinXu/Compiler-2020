@@ -7,6 +7,7 @@ import MIR.IROperand.Register;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Call extends Inst{
     public Function func;
@@ -44,5 +45,11 @@ public class Call extends Inst{
             mirParameters.add(getMirOperand(parameter,mirOperands));
         });
         newBlock.pushInst(new Call(func,mirParameters,reg==null?null: (Register) getMirOperand(reg,mirOperands),newBlock));
+    }
+
+    @Override
+    public HashSet<IRBaseOperand> usedOperandSet() {
+        HashSet<IRBaseOperand>tmp=new HashSet<>(parameters);
+        return tmp;
     }
 }

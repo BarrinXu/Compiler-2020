@@ -5,6 +5,7 @@ import MIR.IROperand.IRBaseOperand;
 import MIR.IROperand.Register;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Store extends Inst{
     public IRBaseOperand val, address;
@@ -36,5 +37,13 @@ public class Store extends Inst{
     @Override
     public void addMirInst(IRBlock newBlock, HashMap<IRBaseOperand, IRBaseOperand> mirOperands, HashMap<IRBlock, IRBlock> mirBlocks) {
         newBlock.pushInst(new Store(getMirOperand(address,mirOperands),getMirOperand(val,mirOperands),newBlock));
+    }
+
+    @Override
+    public HashSet<IRBaseOperand> usedOperandSet() {
+        HashSet<IRBaseOperand>tmp=new HashSet<>();
+        tmp.add(val);
+        tmp.add(address);
+        return tmp;
     }
 }

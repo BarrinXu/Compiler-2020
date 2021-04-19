@@ -219,4 +219,13 @@ public class IRBlock {
             modifyPhi(ori,to);
         }
     }
+    public boolean searchDom(IRBlock x){
+        var now=imDom;
+        while(now!=null){
+            if(now==x)
+                return true;
+            now=now.imDom;
+        }
+        return false;
+    }
 }

@@ -6,6 +6,7 @@ import MIR.IROperand.IRBaseOperand;
 import MIR.IROperand.Register;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 abstract public class Inst {
 
@@ -44,4 +45,5 @@ abstract public class Inst {
             return mirOperands.get(ori);
     }
     public abstract void addMirInst(IRBlock newBlock,HashMap<IRBaseOperand,IRBaseOperand>mirOperands,HashMap<IRBlock,IRBlock>mirBlocks);
+    public abstract HashSet<IRBaseOperand> usedOperandSet();
 }
