@@ -11,17 +11,23 @@ public class Optimizer {
     public void analysis(){
         boolean changed=true;
         while(changed){
+            changed|=new SpecialForInlineAdv(IRRoot).solve();
             changed=new DeadCodeElimination(IRRoot).solve();
             changed|=new ConstantPropagation(IRRoot).solve();
+
         }
     }
 
     public void solve(){
-        new FunctionInline(IRRoot,false).solve();
+        //new FunctionInline(IRRoot,false).solve();
         analysis();
         var vip=new FunctionInline(IRRoot,true);
-        while(vip.solve())
+        //vip.solve();
+        int cnt=0;
+        while(cnt<10&&vip.solve()){
+            cnt++;
             analysis();
+        }
         //new FunctionInline(IRRoot,true).solve();
         //analysis();
     }
