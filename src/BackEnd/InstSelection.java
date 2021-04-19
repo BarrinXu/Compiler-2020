@@ -185,6 +185,13 @@ public class InstSelection {
     public boolean canReverse(BaseInst.CalOpType opCode){
         return opCode== BaseInst.CalOpType.add||opCode== BaseInst.CalOpType.mul||opCode== BaseInst.CalOpType.and||opCode== BaseInst.CalOpType.or||opCode== BaseInst.CalOpType.xor;
     }
+    public boolean onlyBranch(Register reg,IRBlock block){
+        if(reg.usedInsts.size()==1)
+            for(var inst:reg.usedInsts)
+                if(inst==block.tail)
+                    return true;
+        return false;
+    }
     public void solveInst(Inst inst){
         LIRBlock block=nowLBlock;
         if(inst instanceof Binary){
@@ -230,10 +237,28 @@ public class InstSelection {
                 block.pushInst(new Mv(MirToLir(inst.reg),block,oriReg));
         }
         else if(inst instanceof Branch){
+            if(((Branch) inst).condition instanceof Register&&onlyBranch((Register) ((Branch) inst).condition, inst.block)){
+                if(((Register) ((Branch) inst).condition).defInst instanceof Cmp){
+                    var cmpInst=(Cmp)((Register) ((Branch) inst).condition).defInst;
+                    var trueBlock=blockMap.get(((Branch) inst).thenDestBlock);
+                    switch (cmpInst.opCode){
+                        case slt -> block.pushInst(new Br(block,MirToLir(cmpInst.lhs),MirToLir(cmpInst.rhs), Br.BrOpcode.lt,trueBlock));
+                        case sle -> block.pushInst(new Br(block,MirToLir(cmpInst.rhs),MirToLir(cmpInst.lhs), Br.BrOpcode.ge,trueBlock));
+                        case sgt -> block.pushInst(new Br(block,MirToLir(cmpInst.rhs),MirToLir(cmpInst.lhs), Br.BrOpcode.lt,trueBlock));
+                        case sge -> block.pushInst(new Br(block,MirToLir(cmpInst.lhs),MirToLir(cmpInst.rhs), Br.BrOpcode.ge,trueBlock));
+                        case eq -> block.pushInst(new Br(block,MirToLir(cmpInst.lhs),MirToLir(cmpInst.rhs), Br.BrOpcode.eq,trueBlock));
+                        case ne -> block.pushInst(new Br(block,MirToLir(cmpInst.lhs),MirToLir(cmpInst.rhs), Br.BrOpcode.ne,trueBlock));
+                    }
+                    block.pushInst(new Jp(block,blockMap.get(((Branch) inst).elseDestBlock)));
+                    return;
+                }
+            }
             block.pushInst(new Bz(block,MirToLir(((Branch) inst).condition), BaseInst.CmpOpType.beq,blockMap.get(((Branch) inst).elseDestBlock)));
             block.pushInst(new Jp(block,blockMap.get(((Branch) inst).thenDestBlock)));
         }
         else if(inst instanceof Cmp){
+            if(onlyBranch(inst.reg,inst.block))
+                return;
             switch (((Cmp) inst).opCode){
                 case slt -> block.pushInst(new RType(MirToLir(inst.reg),block,MirToLir(((Cmp) inst).lhs),MirToLir(((Cmp) inst).rhs), BaseInst.CalOpType.slt));
                 case sle -> {

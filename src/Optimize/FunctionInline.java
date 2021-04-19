@@ -16,7 +16,7 @@ public class FunctionInline {
     public Root IRRoot;
     public boolean success=false, found=false;
     public boolean force;
-    public int forceLimit=80;
+    public int forceLimit=100;
     public int inlineCnt=0;
     public int inlineTimesLimit=100;
     public HashSet<Function>visit=new HashSet<>();
@@ -58,6 +58,10 @@ public class FunctionInline {
     }
     public boolean solve(){
         if(force){
+            ignoreFunc.clear();
+            instCnt.clear();
+            canInline.clear();
+            success=false;
             ignoreFunc.addAll(IRRoot.builtInFunctions.values());
             ignoreFunc.add(IRRoot.getFunction("main"));
             lineCntAnalysis();
@@ -139,6 +143,9 @@ public class FunctionInline {
         }
     }
     public void inlineOperate(Call inst,Function func){
+        /*inlineCnt++;
+        if(inlineCnt>inlineTimesLimit)
+            return;*/
         HashMap<IRBaseOperand,IRBaseOperand>mirOperands=new HashMap<>();
         HashMap<IRBlock,IRBlock>mirBlocks=new HashMap<>();
         var nowBlock=inst.block;

@@ -19,7 +19,8 @@ public class Optimizer {
     public void solve(){
         new FunctionInline(IRRoot,false).solve();
         analysis();
-        while(new FunctionInline(IRRoot,true).solve())
+        var vip=new FunctionInline(IRRoot,true);
+        while(vip.solve())
             analysis();
         //new FunctionInline(IRRoot,true).solve();
         //analysis();
