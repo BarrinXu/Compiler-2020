@@ -10,9 +10,7 @@ import MIR.IRType.IntType;
 import MIR.Root;
 import com.sun.jdi.InternalException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 
 public class ConstantPropagation {
     public Root IRRoot;
@@ -60,12 +58,15 @@ public class ConstantPropagation {
             visitBlocks.clear();
             solveBlock(func.inBlock);
             reachAnalysis(func);
+            Queue<IRBlock>delete=new LinkedList<>();
             func.blocks.forEach(block -> {
                 if(!reachBlocks.contains(block)){
+                    delete.add(block);
                     block.deleteTerminate();
                     block.setTerminate(new Jump(block,block));//why??
                 }
             });
+            //func.blocks.removeAll(delete);
             success|=changed;
             needUpd|=changed;
         }

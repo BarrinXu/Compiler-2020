@@ -52,4 +52,9 @@ public class Call extends Inst{
         HashSet<IRBaseOperand>tmp=new HashSet<>(parameters);
         return tmp;
     }
+
+    @Override
+    public boolean same(Inst inst) {
+        return false;
+    }
 }

@@ -44,4 +44,9 @@ public class Branch extends Inst{
         tmp.add(condition);
         return tmp;
     }
+
+    @Override
+    public boolean same(Inst inst) {
+        return false;
+    }
 }

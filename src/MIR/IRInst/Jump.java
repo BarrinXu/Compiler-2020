@@ -34,4 +34,9 @@ public class Jump extends Inst{
     public HashSet<IRBaseOperand> usedOperandSet() {
         return new HashSet<>();
     }
+
+    @Override
+    public boolean same(Inst inst) {
+        return false;
+    }
 }

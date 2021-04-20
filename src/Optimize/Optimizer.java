@@ -14,12 +14,14 @@ public class Optimizer {
             //new SpecialForInlineAdv(IRRoot).solve();
             changed=new DeadCodeElimination(IRRoot).solve();
             changed|=new ConstantPropagation(IRRoot).solve();
+            changed|=new CommonSubexpressions(IRRoot).solve();
             new SpecialForInlineAdv(IRRoot).solve();
             changed|=new LoopInvariantCodeMotion(IRRoot).solve();
         }
     }
 
     public void solve(){
+        //new LoopInvariantCodeMotion(IRRoot).solve();
         //new FunctionInline(IRRoot,false).solve();
         analysis();
         var vip=new FunctionInline(IRRoot,true);

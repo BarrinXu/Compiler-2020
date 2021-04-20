@@ -24,6 +24,7 @@ public class IType extends BaseInst{
     @Override
     public String toString(){
         if(abs(imm.val)>imm.limit){
+            System.out.println(imm.val);
             throw new InternalError("ErrorImmRange!");
             /*assert opCode==CalOpType.add;
             String tmp=imm.workOverLimit(dest,rs1).toString();

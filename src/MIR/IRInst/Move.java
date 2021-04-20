@@ -41,4 +41,12 @@ public class Move extends Inst{
         tmp.add(oriOperand);
         return tmp;
     }
+
+    @Override
+    public boolean same(Inst inst) {
+        if(inst instanceof Move){
+            return oriOperand.equals(((Move) inst).oriOperand);
+        }
+        return false;
+    }
 }

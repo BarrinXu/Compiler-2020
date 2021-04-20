@@ -41,4 +41,9 @@ public class Malloc extends Inst{
         tmp.add(size);
         return tmp;
     }
+
+    @Override
+    public boolean same(Inst inst) {
+        return false;
+    }
 }

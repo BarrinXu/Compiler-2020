@@ -46,4 +46,9 @@ public class Store extends Inst{
         tmp.add(address);
         return tmp;
     }
+
+    @Override
+    public boolean same(Inst inst) {
+        return false;
+    }
 }

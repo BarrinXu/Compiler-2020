@@ -8,9 +8,7 @@ import MIR.IRInst.Return;
 import MIR.IROperand.IRBaseOperand;
 import MIR.Root;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Stack;
+import java.util.*;
 
 public class FunctionInline {
     public Root IRRoot;
@@ -37,6 +35,31 @@ public class FunctionInline {
                     cnt++;
             instCnt.put(func,cnt);
         });
+    }
+    public HashSet<Function> useFunc=new HashSet<>();
+    public void useFuncAnalysis(){
+        Queue<Function>queue=new LinkedList<>();
+        useFunc.clear();
+        queue.add(IRRoot.getFunction("main"));
+        useFunc.add(IRRoot.getFunction("main"));
+        while(!queue.isEmpty()){
+            var func=queue.poll();
+            for(var block:func.blocks){
+                for(var inst=block.head; inst!=null; inst=inst.nxt)
+                    if(inst instanceof Call){
+                        var callee=((Call) inst).func;
+                        if(useFunc.contains(callee)||ignoreFunc.contains(callee))
+                            continue;
+                        useFunc.add(callee);
+                        queue.add(callee);
+                    }
+            }
+        }
+        for(var iter=IRRoot.functions.entrySet().iterator(); iter.hasNext();){
+            var func=iter.next().getValue();
+            if(!ignoreFunc.contains(func)&&!useFunc.contains(func))
+                iter.remove();
+        }
     }
     public void forceInlineCollect(){
         IRRoot.functions.forEach((name,func)->{
@@ -68,6 +91,7 @@ public class FunctionInline {
             forceInlineCollect();
             canInline.forEach(this::inlineOperate);
             updDom();
+            useFuncAnalysis();
             return !canInline.isEmpty();
         }
         else{

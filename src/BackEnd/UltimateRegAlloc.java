@@ -13,6 +13,8 @@ import assembly.RISCVInst.St;
 
 import java.util.*;
 
+import static java.lang.Math.pow;
+
 public class UltimateRegAlloc {
     public LRoot lRoot;
 
@@ -75,12 +77,17 @@ public class UltimateRegAlloc {
         public HashSet<LIRBlock>visit=new HashSet<>();
         public HashMap<LIRBlock, HashSet<Reg>>blockUseSet=new HashMap<>();
         public HashMap<LIRBlock, HashSet<Reg>>blockDefSet=new HashMap<>();
+        public Queue<LIRBlock>queue=new LinkedList<>();
         public LiveAnalysis(LFunction func){
             this.func=func;
         }
         public void solve(){
             func.blocks.forEach(this::solveBlock);
-            liveInfoDFS(func.outBlock);
+            queue.add(func.outBlock);
+            visit.add(func.outBlock);
+            while(!queue.isEmpty())
+                liveInfoDFS(queue.poll());
+            //liveInfoDFS(func.outBlock);
         }
         public void solveBlock(LIRBlock block){
             HashSet<Reg> useSet=new HashSet<>();
@@ -96,7 +103,12 @@ public class UltimateRegAlloc {
             block.liveIn.clear();
             block.liveOut.clear();
         }
+        public Stack<LIRBlock> stack=new Stack<>();
         public void liveInfoDFS(LIRBlock block){
+            /*stack.add(block);
+            if(stack.size()>50){
+                System.out.println("!");
+            }*/
             visit.add(block);
             HashSet<Reg>liveOut=new HashSet<>();
             block.sons.forEach(son->{
@@ -112,9 +124,13 @@ public class UltimateRegAlloc {
                 visit.removeAll(block.fas);
             }
             block.fas.forEach(fa->{
-                if(!visit.contains(fa))
-                    liveInfoDFS(fa);
+                if(!visit.contains(fa)){
+                    queue.add(fa);
+                    //liveInfoDFS(fa);
+                    visit.add(fa);
+                }
             });
+            //stack.remove(block);
         }
     }
 
@@ -126,7 +142,8 @@ public class UltimateRegAlloc {
 
     public void getSpillPriority(LFunction func){
         func.blocks.forEach(block -> {
-            double weight=1;
+            double weight=pow(10,block.loopDep);
+            //double weight=1;
             for(var inst=block.head; inst!=null; inst=inst.nxt){
                 inst.usedRegSet().forEach(reg -> {
                     reg.weight+=weight;
@@ -185,6 +202,7 @@ public class UltimateRegAlloc {
             stackSize=0;
             solveFunc(func);
             stackSize+= func.parametersOffset;
+            //System.out.println(stackSize);
             if(stackSize%16!=0)
                 stackSize+=16-stackSize%16;
             finalUpd();

@@ -9,6 +9,7 @@ import MIR.IRType.IntType;
 import MIR.IRType.PointerType;
 import MIR.IRType.VoidType;
 import MIR.Root;
+import com.sun.jdi.InternalException;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -55,6 +56,7 @@ public class LoopInvariantCodeMotion {
                 else if(inst instanceof Call)
                     hasCall=true;
         });
+        var preHead=loop.preHead;
         loop.blocks.forEach(block -> {
             for(var inst=block.head; inst!=null; inst=inst.nxt)
                 tryModify(inst,loopDefRegs,queue);
@@ -63,7 +65,7 @@ public class LoopInvariantCodeMotion {
         while(!queue.isEmpty()){
             var inst=queue.poll();
             inst.deleteInList();
-            loop.preHead.addInstBack(inst);
+            preHead.addInstBack(inst);
             inst.reg.usedInsts.forEach(usedInst->{
                 if(loopDefRegs.contains(usedInst.reg))
                     tryModify(usedInst,loopDefRegs,queue);
@@ -71,6 +73,8 @@ public class LoopInvariantCodeMotion {
         }
     }
     public boolean judgeGlobalReg(GlobalRegister register){
+        if(!(register.type instanceof PointerType))
+            throw new InternalException();
         var to=((PointerType)register.type).dest;
         return to instanceof IntType||to instanceof BoolType||to instanceof VoidType;
     }

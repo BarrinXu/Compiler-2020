@@ -37,6 +37,18 @@ public class Cmp extends Inst{
         return tmp;
     }
 
+    @Override
+    public boolean same(Inst inst) {
+        if(inst instanceof Cmp){
+            if(opCode==((Cmp) inst).opCode)
+                if(lhs==((Cmp) inst).lhs&&rhs==((Cmp) inst).rhs)
+                    return true;
+            if(opposite_opCode==((Cmp) inst).opCode)
+                return lhs.equals(((Cmp) inst).rhs)&&rhs.equals(((Cmp) inst).lhs);
+        }
+        return false;
+    }
+
     public enum CmpOpType{
         slt,sle,sgt,sge,eq,ne
     }

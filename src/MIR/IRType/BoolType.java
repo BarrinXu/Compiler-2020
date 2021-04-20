@@ -9,4 +9,9 @@ public class BoolType extends IRBaseType{
     public int size() {
         return 8;
     }
+
+    @Override
+    public boolean sameType(IRBaseType rhs) {
+        return rhs instanceof BoolType;
+    }
 }

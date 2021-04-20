@@ -9,4 +9,9 @@ public class VoidType extends IRBaseType{
     public int size() {
         return 0;
     }
+
+    @Override
+    public boolean sameType(IRBaseType rhs) {
+        return rhs instanceof VoidType;
+    }
 }

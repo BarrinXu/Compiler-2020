@@ -42,4 +42,9 @@ public class Return extends Inst{
             tmp.add(val);
         return tmp;
     }
+
+    @Override
+    public boolean same(Inst inst) {
+        return false;
+    }
 }

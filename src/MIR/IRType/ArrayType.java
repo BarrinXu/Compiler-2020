@@ -13,4 +13,9 @@ public class ArrayType extends IRBaseType{
     public int size() {
         return type.size();
     }
+
+    @Override
+    public boolean sameType(IRBaseType rhs) {
+        return (rhs instanceof PointerType&&(((PointerType) rhs).dest.sameType(type)||((PointerType) rhs).dest instanceof VoidType))||(rhs instanceof ArrayType&&((ArrayType) rhs).type.sameType(type));
+    }
 }

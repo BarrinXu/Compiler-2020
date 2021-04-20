@@ -9,7 +9,7 @@ import java.util.HashSet;
 public class LIRBlock {
     public ArrayList<LIRBlock> fas=new ArrayList<>();
     public ArrayList<LIRBlock> sons=new ArrayList<>();
-
+    public int loopDep;
     public LIRBlock nxt=null;
 
     public HashSet<Reg> liveIn=new HashSet<Reg>();
@@ -20,8 +20,9 @@ public class LIRBlock {
     public String name;
     public BaseInst head=null,tail=null;
 
-    public LIRBlock(String name){
+    public LIRBlock(String name, int loopDep){
         this.name=name;
+        this.loopDep=loopDep;
     }
     public void pushInst(BaseInst inst){
         if(head==null)

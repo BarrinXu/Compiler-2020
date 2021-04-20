@@ -22,4 +22,9 @@ public class PointerType extends IRBaseType{
     public boolean needPtrLoad(){
         return needPtrLoad;
     }
+
+    @Override
+    public boolean sameType(IRBaseType rhs) {
+        return (rhs instanceof PointerType&&(((PointerType) rhs).dest instanceof VoidType||((PointerType) rhs).dest.sameType(dest)))||(rhs instanceof ArrayType&&rhs.sameType(this));
+    }
 }

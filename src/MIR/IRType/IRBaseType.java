@@ -11,4 +11,5 @@ abstract public class IRBaseType {
     public boolean needPtrLoad(){
         return false;
     }
+    public abstract boolean sameType(IRBaseType rhs);
 }

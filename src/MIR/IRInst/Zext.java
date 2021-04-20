@@ -41,4 +41,12 @@ public class Zext extends Inst{
         tmp.add(origin);
         return tmp;
     }
+
+    @Override
+    public boolean same(Inst inst) {
+        if(inst instanceof Zext){
+            return origin.equals(((Zext) inst).origin)&&reg.type.sameType(inst.reg.type);
+        }
+        return false;
+    }
 }

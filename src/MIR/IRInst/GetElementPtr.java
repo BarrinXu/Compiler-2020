@@ -56,4 +56,12 @@ public class GetElementPtr extends Inst{
         tmp.add(arrayOffset);
         return tmp;
     }
+
+    @Override
+    public boolean same(Inst inst) {
+        if(inst instanceof GetElementPtr){
+            return pointer.equals(((GetElementPtr) inst).pointer)&&arrayOffset.equals(((GetElementPtr) inst).arrayOffset)&&((elementOffset==null&&((GetElementPtr) inst).elementOffset==null)||(elementOffset!=null&&elementOffset.equals(((GetElementPtr) inst).elementOffset)));
+        }
+        return false;
+    }
 }

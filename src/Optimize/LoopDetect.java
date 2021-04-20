@@ -57,7 +57,7 @@ public class LoopDetect {
                     if(!loop.tails.contains(phiInst.blocks.get(i))){
                         if(mirPhi==null){
                             mirPhi=new Phi(new Register(phiInst.reg.type,phiInst.reg.name+"_PreHeadPhi"),preHead,new ArrayList<>(),new ArrayList<>());
-                            //preHead.add_PhiInst(mirPhi);
+                            preHead.add_PhiInst(mirPhi);
                         }
                         mirPhi.addOrigin(phiInst.operands.get(i),phiInst.blocks.get(i));
                         phiInst.operands.remove(i);

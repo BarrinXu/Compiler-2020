@@ -27,4 +27,9 @@ public class ClassType extends IRBaseType{
     public int size() {
         return size;
     }
+
+    @Override
+    public boolean sameType(IRBaseType rhs) {
+        return rhs instanceof ClassType&&((ClassType) rhs).name.equals(name);
+    }
 }

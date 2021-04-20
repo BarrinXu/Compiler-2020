@@ -104,7 +104,7 @@ public class InstSelection {
         });
         IRRoot.functions.forEach((name,func)->{
             func.blocks.forEach(block -> {
-                blockMap.put(block,new LIRBlock("."+func.name+"_"+block.name));
+                blockMap.put(block,new LIRBlock("."+func.name+"_"+block.name,block.loopDep));
             });
             LFunction Lfunc=new LFunction(name,blockMap.get(func.inBlock),blockMap.get(func.outBlock));
             funcMap.put(func,Lfunc);
@@ -192,6 +192,18 @@ public class InstSelection {
                     return true;
         return false;
     }
+    public int mulInstSpecial(int x){
+        int len=0;
+        while(x>1){
+            if(x%2==0){
+                len++;
+                x/=2;
+            }
+            else
+                return -1;
+        }
+        return len;
+    }
     public void solveInst(Inst inst){
         LIRBlock block=nowLBlock;
         if(inst instanceof Binary){
@@ -210,8 +222,24 @@ public class InstSelection {
             }
             if(opCode==BaseInst.CalOpType.mul||opCode==BaseInst.CalOpType.div||opCode==BaseInst.CalOpType.rem)
             {
-                block.pushInst(new RType(MirToLir(inst.reg),block,MirToLir(((Binary) inst).lhs),MirToLir(((Binary) inst).rhs),opCode));
-                return;
+                if(opCode== BaseInst.CalOpType.mul){
+                    if(judgeImm(((Binary) inst).lhs)){
+                        int id=mulInstSpecial(((ConstInt)((Binary) inst).lhs).val);
+                        if(id!=-1){
+                            block.pushInst(new IType(MirToLir(inst.reg),block,MirToLir(((Binary) inst).rhs),new Imm(id), BaseInst.CalOpType.sll));
+                            return;
+                        }
+                    }
+                    if(judgeImm(((Binary) inst).rhs)){
+                        int id=mulInstSpecial(((ConstInt)((Binary) inst).rhs).val);
+                        if(id!=-1){
+                            block.pushInst(new IType(MirToLir(inst.reg),block,MirToLir(((Binary) inst).lhs),new Imm(id), BaseInst.CalOpType.sll));
+                            return;
+                        }
+                    }
+                    block.pushInst(new RType(MirToLir(inst.reg),block,MirToLir(((Binary) inst).lhs),MirToLir(((Binary) inst).rhs),opCode));
+                    return;
+                }
             }
             else{
                 if(canReverse(opCode)&&judgeImm(((Binary) inst).lhs)){
@@ -359,7 +387,11 @@ public class InstSelection {
             }
             else{
                 destMul=new VirReg(cnt++,4);
-                block.pushInst(new RType(destMul,block,MirToLir(((GetElementPtr) inst).arrayOffset),MirToLir(new ConstInt(((GetElementPtr) inst).type.size()/8,32)), BaseInst.CalOpType.mul));
+                int eachSize=((GetElementPtr) inst).type.size()/8;
+                if(eachSize==4)
+                    block.pushInst(new IType(destMul,block,MirToLir(((GetElementPtr) inst).arrayOffset),new Imm(2), BaseInst.CalOpType.sll));
+                else
+                    block.pushInst(new RType(destMul,block,MirToLir(((GetElementPtr) inst).arrayOffset),MirToLir(new ConstInt(((GetElementPtr) inst).type.size()/8,32)), BaseInst.CalOpType.mul));
                 block.pushInst(new RType(destIdx,block,MirToLir(((GetElementPtr) inst).pointer),destMul, BaseInst.CalOpType.add));
             }
             Reg finalPtr;

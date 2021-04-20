@@ -42,4 +42,11 @@ public class BitCast extends Inst{
         tmp.add(it);
         return tmp;
     }
+
+    @Override
+    public boolean same(Inst inst) {
+        if(inst instanceof BitCast)
+            return it.equals(((BitCast) inst).it)&&reg.type.sameType(inst.reg.type);
+        return false;
+    }
 }

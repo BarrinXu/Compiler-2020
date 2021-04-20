@@ -66,6 +66,23 @@ public class Phi extends Inst{
         return new HashSet<>(operands);
     }
 
+    @Override
+    public boolean same(Inst inst) {
+        if(inst instanceof Phi){
+            HashSet<IRBaseOperand> rhsValues=new HashSet<>(((Phi) inst).operands);
+            int size=operands.size();
+            if(size== rhsValues.size()){
+                for(int i=0; i<size; i++){
+                    var nowVal=operands.get(i);
+                    if(!rhsValues.contains(nowVal)||((Phi) inst).blocks.get(((Phi) inst).operands.indexOf(nowVal))!=blocks.get(i))
+                        return false;
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void addOrigin(IRBaseOperand operand,IRBlock origin){
         operands.add(operand);
         blocks.add(origin);

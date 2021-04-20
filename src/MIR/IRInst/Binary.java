@@ -13,11 +13,13 @@ public class Binary extends Inst{
     }
     public BinaryOpType opCode;
     public IRBaseOperand lhs,rhs;
+    public boolean canReverse;
     public Binary(Register reg, IRBlock block,BinaryOpType opCode,IRBaseOperand lhs,IRBaseOperand rhs) {
         super(reg, block);
         this.opCode=opCode;
         this.lhs=lhs;
         this.rhs=rhs;
+        canReverse=opCode==BinaryOpType.mul||opCode==BinaryOpType.and||opCode==BinaryOpType.xor||opCode==BinaryOpType.or||opCode==BinaryOpType.add;
         lhs.addUsedInst(this);
         rhs.addUsedInst(this);
         reg.defInst=this;
@@ -49,5 +51,18 @@ public class Binary extends Inst{
         tmp.add(lhs);
         tmp.add(rhs);
         return tmp;
+    }
+
+    @Override
+    public boolean same(Inst inst) {
+        if(inst instanceof Binary){
+            if(opCode==((Binary) inst).opCode){
+                if(canReverse)
+                    return (lhs.equals(((Binary) inst).lhs)&&rhs.equals(((Binary) inst).rhs))||(lhs.equals(((Binary) inst).rhs)&&rhs.equals(((Binary) inst).lhs));
+                else
+                    return lhs.equals(((Binary) inst).lhs)&&rhs.equals(((Binary) inst).rhs);
+            }
+        }
+        return false;
     }
 }

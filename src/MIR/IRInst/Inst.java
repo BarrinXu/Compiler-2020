@@ -46,4 +46,5 @@ abstract public class Inst {
     }
     public abstract void addMirInst(IRBlock newBlock,HashMap<IRBaseOperand,IRBaseOperand>mirOperands,HashMap<IRBlock,IRBlock>mirBlocks);
     public abstract HashSet<IRBaseOperand> usedOperandSet();
+    public abstract boolean same(Inst inst);
 }
