@@ -24,13 +24,14 @@ public class Optimizer {
         //new LoopInvariantCodeMotion(IRRoot).solve();
         //new FunctionInline(IRRoot,false).solve();
         analysis();
-        /*var vip=new FunctionInline(IRRoot,true);
+        var vip=new FunctionInline(IRRoot,true);
         //vip.solve();
         int cnt=0;
         while(cnt<10&&vip.solve()){
             cnt++;
-            analysis();
-        }*/
+            
+        }
+		analysis();
         //new FunctionInline(IRRoot,true).solve();
         //analysis();
     }
