@@ -19,6 +19,17 @@ public class Optimizer {
             changed|=new LoopInvariantCodeMotion(IRRoot).solve();
         }
     }
+	public void inlineAnalysis(){
+        boolean changed=true;
+        while(changed){
+            //new SpecialForInlineAdv(IRRoot).solve();
+            changed=new DeadCodeElimination(IRRoot).solve();
+            changed|=new ConstantPropagation(IRRoot).solve();
+            changed|=new CommonSubexpressions(IRRoot).solve();
+            new SpecialForInlineAdv(IRRoot).solve();
+            //changed|=new LoopInvariantCodeMotion(IRRoot).solve();
+        }
+    }
 
     public void solve(){
         //new LoopInvariantCodeMotion(IRRoot).solve();
@@ -29,9 +40,10 @@ public class Optimizer {
         int cnt=0;
         while(cnt<10&&vip.solve()){
             cnt++;
+			inlineAnalysis();
             
         }
-		analysis();
+		//analysis();
         //new FunctionInline(IRRoot,true).solve();
         //analysis();
     }
