@@ -36,7 +36,7 @@ public class LRoot {
         assignRegs.addAll(callerRegs);
         assignRegs.addAll(calleeRegs);
         assignRegs.remove(0);
-        assignRegs.add(realRegs.get(1));//Why
+        assignRegs.add(realRegs.get(1));
     }
 
 }

@@ -163,7 +163,7 @@ public class FunctionInline {
             if(!ignoreFunc.contains(func))
                 iter.remove();
             else if(callPair.get(func).size()==1&&callPair.get(func).contains(func))
-                iter.remove();//maybe why
+                iter.remove();
         }
     }
     public void inlineOperate(Call inst,Function func){

@@ -63,10 +63,10 @@ public class ConstantPropagation {
                 if(!reachBlocks.contains(block)){
                     delete.add(block);
                     block.deleteTerminate();
-                    block.setTerminate(new Jump(block,block));//why??
+                    //block.setTerminate(new Jump(block,block));
                 }
             });
-            //func.blocks.removeAll(delete);
+            func.blocks.removeAll(delete);
             success|=changed;
             needUpd|=changed;
         }

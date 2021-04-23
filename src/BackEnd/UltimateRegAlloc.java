@@ -359,7 +359,7 @@ public class UltimateRegAlloc {
         }
     }
     public void coalesce(){
-        //func title maybe change!
+        //maybe change!
         var mv=workListMoves.iterator().next();
         var x=getAlias(mv.dest);
         var y=getAlias(mv.ori);
@@ -497,7 +497,7 @@ public class UltimateRegAlloc {
             minv=minn.weight/minn.deg;
             if(!spillIntroduce.contains(minn))
                 break;
-        }//why
+        }
         while(it.hasNext()){
             var reg=it.next();
             if((!spillIntroduce.contains(reg))&&reg.weight/reg.deg<minv){

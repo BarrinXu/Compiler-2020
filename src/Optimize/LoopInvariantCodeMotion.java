@@ -56,7 +56,7 @@ public class LoopInvariantCodeMotion {
                 else if(inst instanceof Call)
                     hasCall=true;
         });
-        var preHead=loop.preHead;
+        //var preHead=loop.preHead;
         loop.blocks.forEach(block -> {
             for(var inst=block.head; inst!=null; inst=inst.nxt)
                 tryModify(inst,loopDefRegs,queue);
@@ -65,7 +65,7 @@ public class LoopInvariantCodeMotion {
         while(!queue.isEmpty()){
             var inst=queue.poll();
             inst.deleteInList();
-            preHead.addInstBack(inst);
+            loop.preHead.addInstBack(inst);
             inst.reg.usedInsts.forEach(usedInst->{
                 if(loopDefRegs.contains(usedInst.reg))
                     tryModify(usedInst,loopDefRegs,queue);

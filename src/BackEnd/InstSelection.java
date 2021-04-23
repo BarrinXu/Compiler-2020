@@ -150,7 +150,7 @@ public class InstSelection {
         int offset =0;
         for(int i=8; i<func.parameters.size(); i++){
             inBlock.pushInst(new Ld(Lfunc.parameters.get(i),inBlock,LRoot.realRegs.get(2),new StackImm(offset),func.parameters.get(i).type.size()/8));
-            offset +=4;//Why
+            offset +=4;
         }
 
         func.blocks.forEach(block -> {
@@ -259,7 +259,7 @@ public class InstSelection {
         else if(inst instanceof BitCast){
             Reg oriReg=MirToLir(((BitCast) inst).it);
             if(oriReg instanceof LGlobalReg)
-                //Why
+
                 block.pushInst(new La(MirToLir(inst.reg),block, (LGlobalReg) oriReg));
             else
                 block.pushInst(new Mv(MirToLir(inst.reg),block,oriReg));

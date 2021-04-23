@@ -702,7 +702,7 @@ public class IRBuilder implements ASTVisitor {
                 nowBlock.pushInst(new BitCast((Register) castPtr,nowBlock,operand));
             nowBlock.pushInst(new GetElementPtr(oriPtr,nowBlock,Root.int32_type,castPtr,new ConstInt(-1,32),null));
             nowBlock.pushInst(new Load((Register) it.operand,oriPtr,nowBlock));
-            //???why???
+
         }
         else{
             if(!it.type.isVoid())
@@ -897,8 +897,8 @@ public class IRBuilder implements ASTVisitor {
     public void visit(stringLiteral it) {
         String name;
         String val =it.value.substring(1,it.value.length()-1);
-        val = val.replace("\\n", "\n");//can delete why
-        val = val.replace("\\t", "\t");//can delete why
+        val = val.replace("\\n", "\n");
+        val = val.replace("\\t", "\t");
         val = val.replace("\\\"", "\"");
         val = val.replace("\\\\", "\\");
         val += "\0";
@@ -983,7 +983,7 @@ public class IRBuilder implements ASTVisitor {
             nowBlock.pushInst(new Binary(indexNewCnt,nowBlock, Binary.BinaryOpType.add,indexVisitCnt,new ConstInt(1,32)));
             nowBlock.pushInst(new Cmp(mallocBranchResult,nowBlock, Cmp.CmpOpType.sle,indexVisitCnt,nowIndex));
             nowBlock.setTerminate(new Branch(nowBlock,mallocBranchResult,bodyBlock,destBlock));
-            //Why
+
 
             nowBlock=bodyBlock;
             nowBlock.pushInst(new GetElementPtr(oriPtr,nowBlock,Root.int32_type,allocBitCast,indexVisitCnt,null));
