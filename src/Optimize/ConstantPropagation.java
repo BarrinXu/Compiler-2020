@@ -66,7 +66,7 @@ public class ConstantPropagation {
                     block.setTerminate(new Jump(block,block));
                 }
             });
-            //func.blocks.removeAll(delete);
+            func.blocks.removeAll(delete);
             success|=changed;
             needUpd|=changed;
         }
