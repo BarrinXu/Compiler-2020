@@ -41,9 +41,6 @@ public class Optimizer {
         while(cnt<15&&vip.solve()){
             cnt++;
 			inlineAnalysis();
-			new LoopInvariantCodeMotion(IRRoot).solve();
-		new ConstantPropagation(IRRoot).solve();
-        new CommonSubexpressions(IRRoot).solve();
             
         }
 		
