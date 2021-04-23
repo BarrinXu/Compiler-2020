@@ -38,7 +38,7 @@ public class Optimizer {
         var vip=new FunctionInline(IRRoot,true);
         //vip.solve();
         int cnt=0;
-        while(cnt<10&&vip.solve()){
+        while(cnt<15&&vip.solve()){
             cnt++;
 			inlineAnalysis();
             

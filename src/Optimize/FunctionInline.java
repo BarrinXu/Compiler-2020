@@ -14,7 +14,7 @@ public class FunctionInline {
     public Root IRRoot;
     public boolean success=false, found=false;
     public boolean force;
-    public int forceLimit=150;
+    public int forceLimit=140;
     public int inlineCnt=0;
     public int inlineTimesLimit=100;
     public HashSet<Function>visit=new HashSet<>();
