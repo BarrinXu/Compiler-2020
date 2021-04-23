@@ -359,7 +359,7 @@ public class UltimateRegAlloc {
         }
     }
     public void coalesce(){
-        //maybe change!
+        //func title maybe change!
         var mv=workListMoves.iterator().next();
         var x=getAlias(mv.dest);
         var y=getAlias(mv.ori);
