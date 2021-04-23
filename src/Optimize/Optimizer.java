@@ -43,6 +43,9 @@ public class Optimizer {
 			inlineAnalysis();
             
         }
+		new LoopInvariantCodeMotion(IRRoot).solve();
+		new ConstantPropagation(IRRoot).solve();
+        new CommonSubexpressions(IRRoot).solve();
 		//analysis();
         //new FunctionInline(IRRoot,true).solve();
         //analysis();
